@@ -20,6 +20,8 @@ defined( 'ABSPATH' ) || exit;
 
 <a class="skip-link screen-reader-text" href="#content"><?php esc_html_e( 'Aller au contenu', 'healtheat-theme' ); ?></a>
 
+<?php healtheat_backdrop(); ?>
+
 <div class="site">
 	<header class="site-header">
 		<div class="site-header__inner">
@@ -29,7 +31,9 @@ defined( 'ABSPATH' ) || exit;
 				<?php else : ?>
 					<p class="site-title">
 						<a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
-							<span class="site-title__mark" aria-hidden="true">🌿</span>
+							<span class="site-title__mark" aria-hidden="true">
+								<?php echo healtheat_food_svg( 'leaf' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+							</span>
 							<?php bloginfo( 'name' ); ?>
 						</a>
 					</p>

@@ -20,11 +20,16 @@ while ( have_posts() ) :
 	<article id="post-<?php the_ID(); ?>" <?php post_class( 'dish-single' ); ?>>
 		<div class="wrap">
 			<div class="dish-single__layout">
-				<div class="dish-single__media">
+				<div class="dish-single__media" data-reveal>
 					<?php if ( has_post_thumbnail() ) : ?>
 						<?php the_post_thumbnail( 'healtheat-dish' ); ?>
 					<?php else : ?>
-						<div class="dish-single__placeholder" aria-hidden="true">🥗</div>
+						<div class="dish-single__placeholder" aria-hidden="true">
+							<?php
+							$healtheat_keys = healtheat_food_keys();
+							echo healtheat_food_svg( $healtheat_keys[ get_the_ID() % count( $healtheat_keys ) ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>
+						</div>
 					<?php endif; ?>
 				</div>
 
@@ -46,14 +51,27 @@ while ( have_posts() ) :
 					<div class="entry-content"><?php the_content(); ?></div>
 
 					<?php if ( $healtheat_nutrition['calories'] ) : ?>
-						<div class="nutrition">
+						<div class="nutrition" data-reveal>
 							<h2 class="nutrition__title"><?php esc_html_e( 'Valeurs nutritionnelles', 'healtheat-theme' ); ?></h2>
 							<ul class="nutrition__list">
-								<li><strong><?php echo esc_html( $healtheat_nutrition['calories'] ); ?></strong><span>kcal</span></li>
-								<li><strong><?php echo esc_html( $healtheat_nutrition['protein'] ); ?> g</strong><span><?php esc_html_e( 'Protéines', 'healtheat-theme' ); ?></span></li>
-								<li><strong><?php echo esc_html( $healtheat_nutrition['carbs'] ); ?> g</strong><span><?php esc_html_e( 'Glucides', 'healtheat-theme' ); ?></span></li>
-								<li><strong><?php echo esc_html( $healtheat_nutrition['fat'] ); ?> g</strong><span><?php esc_html_e( 'Lipides', 'healtheat-theme' ); ?></span></li>
-								<li><strong><?php echo esc_html( $healtheat_nutrition['fiber'] ); ?> g</strong><span><?php esc_html_e( 'Fibres', 'healtheat-theme' ); ?></span></li>
+								<?php
+								$healtheat_macros = array(
+									array( $healtheat_nutrition['calories'], '', __( 'kcal', 'healtheat-theme' ) ),
+									array( $healtheat_nutrition['protein'], ' g', __( 'Protéines', 'healtheat-theme' ) ),
+									array( $healtheat_nutrition['carbs'], ' g', __( 'Glucides', 'healtheat-theme' ) ),
+									array( $healtheat_nutrition['fat'], ' g', __( 'Lipides', 'healtheat-theme' ) ),
+									array( $healtheat_nutrition['fiber'], ' g', __( 'Fibres', 'healtheat-theme' ) ),
+								);
+
+								foreach ( $healtheat_macros as $healtheat_macro ) :
+									?>
+									<li>
+										<strong data-count="<?php echo esc_attr( $healtheat_macro[0] ); ?>" data-count-suffix="<?php echo esc_attr( $healtheat_macro[1] ); ?>">
+											<?php echo esc_html( $healtheat_macro[0] . $healtheat_macro[1] ); ?>
+										</strong>
+										<span><?php echo esc_html( $healtheat_macro[2] ); ?></span>
+									</li>
+								<?php endforeach; ?>
 							</ul>
 						</div>
 					<?php endif; ?>

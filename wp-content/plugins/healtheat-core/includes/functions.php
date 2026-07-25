@@ -160,6 +160,68 @@ function healtheat_get_dish_data( $dish ) {
 }
 
 /**
+ * Returns the tags and attributes allowed when a theme injects an SVG.
+ *
+ * @return array<string,array<string,bool>>
+ */
+function healtheat_svg_allowed_html() {
+	$attributes = array(
+		'class'             => true,
+		'style'             => true,
+		'aria-hidden'       => true,
+		'focusable'         => true,
+		'role'              => true,
+		'viewbox'           => true,
+		'xmlns'             => true,
+		'width'             => true,
+		'height'            => true,
+		'fill'              => true,
+		'stroke'            => true,
+		'stroke-width'      => true,
+		'stroke-linecap'    => true,
+		'stroke-linejoin'   => true,
+		'stroke-dasharray'  => true,
+		'opacity'           => true,
+		'transform'         => true,
+		'd'                 => true,
+		'cx'                => true,
+		'cy'                => true,
+		'r'                 => true,
+		'rx'                => true,
+		'ry'                => true,
+		'x'                 => true,
+		'y'                 => true,
+		'x1'                => true,
+		'y1'                => true,
+		'x2'                => true,
+		'y2'                => true,
+		'points'            => true,
+		'offset'            => true,
+		'stop-color'        => true,
+		'stop-opacity'      => true,
+		'id'                => true,
+		'gradientunits'     => true,
+	);
+
+	return array(
+		'svg'            => $attributes,
+		'g'              => $attributes,
+		'path'           => $attributes,
+		'circle'         => $attributes,
+		'ellipse'        => $attributes,
+		'rect'           => $attributes,
+		'line'           => $attributes,
+		'polyline'       => $attributes,
+		'polygon'        => $attributes,
+		'defs'           => $attributes,
+		'lineargradient' => $attributes,
+		'radialgradient' => $attributes,
+		'stop'           => $attributes,
+		'title'          => $attributes,
+	);
+}
+
+/**
  * Returns the URL of the click &amp; collect page.
  *
  * @return string

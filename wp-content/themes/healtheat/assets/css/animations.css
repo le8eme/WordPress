@@ -1,0 +1,471 @@
+/**
+ * Health'eat — aliments illustrés et animations.
+ *
+ * Tout ce qui bouge est regroupé ici. Le fichier se neutralise entièrement
+ * si le visiteur a demandé moins d'animations (voir la fin du fichier).
+ */
+
+/* Aliments : couleurs des différentes parties
+   -------------------------------------------------- */
+
+.food {
+	display: block;
+	width: 100%;
+	height: auto;
+	overflow: visible;
+}
+
+.food__shell,
+.food__flesh,
+.food__pit,
+.food__rim {
+	transform-origin: 50% 50%;
+}
+
+.food__vein,
+.food__stem,
+.food__segments line {
+	fill: none;
+	stroke-width: 4;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+/* Avocat */
+.food--avocado .food__shell { fill: #1e7a4f; }
+.food--avocado .food__flesh { fill: #c6f58f; }
+.food--avocado .food__pit { fill: #8a5a2b; }
+
+/* Feuille */
+.food--leaf .food__shell { fill: #3ddc84; }
+.food--leaf .food__vein { stroke: #0b3b22; stroke-width: 3; }
+
+/* Tomate */
+.food--tomato .food__shell { fill: #ff4d5e; }
+.food--tomato .food__flesh { fill: none; stroke: rgba(255, 255, 255, 0.45); stroke-width: 5; stroke-linecap: round; }
+.food--tomato .food__stem { stroke: #3ddc84; }
+
+/* Agrume */
+.food--citrus .food__shell { fill: #ff9f1c; }
+.food--citrus .food__flesh { fill: #ffd166; }
+.food--citrus .food__segments line { stroke: #ff9f1c; stroke-width: 5; }
+.food--citrus .food__pit { fill: #fff3c4; }
+
+/* Baie */
+.food--berry .food__shell { fill: #7c6bff; }
+.food--berry .food__flesh { fill: rgba(255, 255, 255, 0.35); }
+.food--berry .food__stem { stroke: #3ddc84; }
+
+/* Brocoli */
+.food--broccoli .food__shell { fill: #2fa96b; }
+.food--broccoli .food__flesh { fill: #6ef0a5; }
+.food--broccoli .food__stem { fill: #a9e5bd; stroke: none; }
+
+/* Graines */
+.food--grain .food__shell { fill: #e9c46a; }
+.food--grain .food__vein { stroke: #b98b3e; stroke-width: 3; }
+
+/* Carotte */
+.food--carrot .food__shell { fill: #ff8a3d; }
+.food--carrot .food__vein { stroke: rgba(64, 24, 0, 0.35); stroke-width: 3; }
+.food--carrot .food__stem { stroke: #3ddc84; }
+
+/* Bol */
+.food--bowl .food__shell { fill: rgba(52, 229, 255, 0.12); }
+.food--bowl .food__rim { fill: none; stroke: var(--he-cyan); stroke-width: 3; }
+.food--bowl .food__vein { stroke: rgba(230, 241, 236, 0.35); stroke-width: 3; }
+
+/* Goutte */
+.food--droplet .food__shell { fill: #34e5ff; }
+.food--droplet .food__flesh { fill: none; stroke: rgba(255, 255, 255, 0.6); stroke-width: 5; stroke-linecap: round; }
+
+/* Boucles d'animation
+   -------------------------------------------------- */
+
+@keyframes he-float {
+	0%   { transform: translate3d(0, 0, 0) rotate(0deg); }
+	50%  { transform: translate3d(0, -22px, 0) rotate(8deg); }
+	100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+}
+
+@keyframes he-drift {
+	0%   { transform: translate3d(0, 0, 0) rotate(-6deg); }
+	50%  { transform: translate3d(14px, -16px, 0) rotate(10deg); }
+	100% { transform: translate3d(0, 0, 0) rotate(-6deg); }
+}
+
+@keyframes he-spin {
+	to { transform: rotate(360deg); }
+}
+
+@keyframes he-spin-back {
+	to { transform: rotate(-360deg); }
+}
+
+@keyframes he-pulse {
+	0%, 100% { opacity: 0.55; transform: scale(1); }
+	50%      { opacity: 1; transform: scale(1.06); }
+}
+
+@keyframes he-marquee {
+	from { transform: translate3d(0, 0, 0); }
+	to   { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes he-aurora {
+	0%   { transform: translate3d(0, 0, 0) scale(1); }
+	33%  { transform: translate3d(6vw, -4vh, 0) scale(1.15); }
+	66%  { transform: translate3d(-5vw, 5vh, 0) scale(0.95); }
+	100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes he-scan {
+	0%   { transform: translateY(-120%); opacity: 0; }
+	40%  { opacity: 1; }
+	100% { transform: translateY(320%); opacity: 0; }
+}
+
+@keyframes he-blink {
+	0%, 100% { opacity: 1; }
+	50%      { opacity: 0.25; }
+}
+
+@keyframes he-rise {
+	from { opacity: 0; transform: translateY(26px); }
+	to   { opacity: 1; transform: none; }
+}
+
+/* Fond animé
+   -------------------------------------------------- */
+
+.he-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	overflow: hidden;
+}
+
+.he-backdrop__grid {
+	position: absolute;
+	inset: -50%;
+	background-image:
+		linear-gradient(rgba(124, 255, 158, 0.055) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(52, 229, 255, 0.045) 1px, transparent 1px);
+	background-size: 64px 64px;
+	transform: perspective(600px) rotateX(62deg) translateY(-8%);
+	mask-image: radial-gradient(ellipse at 50% 30%, #000 0%, transparent 72%);
+	-webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 0%, transparent 72%);
+}
+
+.he-backdrop__blob {
+	position: absolute;
+	width: 46vw;
+	height: 46vw;
+	border-radius: 50%;
+	filter: blur(90px);
+	opacity: 0.5;
+	animation: he-aurora 26s ease-in-out infinite;
+}
+
+.he-backdrop__blob--1 { top: -12vh; left: -8vw; background: radial-gradient(circle, rgba(124, 255, 158, 0.55), transparent 68%); }
+.he-backdrop__blob--2 { top: 24vh; right: -12vw; background: radial-gradient(circle, rgba(52, 229, 255, 0.45), transparent 68%); animation-delay: -9s; }
+.he-backdrop__blob--3 { bottom: -18vh; left: 28vw; background: radial-gradient(circle, rgba(176, 124, 255, 0.4), transparent 68%); animation-delay: -17s; }
+
+/* Aliments flottants du héros
+   -------------------------------------------------- */
+
+.food-field {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: 1;
+}
+
+/*
+ * Trois couches de transformation empilées pour qu'elles ne se marchent
+ * pas dessus : la parallaxe (JS) sur l'élément, la dérive et la rotation
+ * en CSS à l'intérieur.
+ */
+.food-field__item {
+	position: absolute;
+	width: var(--size, 72px);
+	opacity: 0.9;
+	transform: translate3d(var(--px, 0px), var(--py, 0px), 0);
+	will-change: transform;
+}
+
+.food-field__float {
+	display: block;
+	animation: he-drift var(--duration, 11s) ease-in-out infinite;
+	animation-delay: var(--delay, 0s);
+}
+
+.food-field__item .food {
+	filter: drop-shadow(0 12px 26px rgba(4, 12, 8, 0.55));
+	animation: he-spin var(--rotation, 34s) linear infinite;
+}
+
+.food-field__item--reverse .food {
+	animation-name: he-spin-back;
+}
+
+/* Orbite centrale
+   -------------------------------------------------- */
+
+.orbit {
+	position: relative;
+	width: min(430px, 82vw);
+	aspect-ratio: 1;
+	margin-inline: auto;
+}
+
+.orbit__core {
+	position: absolute;
+	inset: 26%;
+	border-radius: 50%;
+	background:
+		radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.5), transparent 55%),
+		radial-gradient(circle, var(--he-neon), var(--he-cyan) 62%, transparent 74%);
+	filter: blur(2px);
+	animation: he-pulse 5.5s ease-in-out infinite;
+}
+
+.orbit__core-food {
+	position: absolute;
+	inset: 30%;
+	display: grid;
+	place-items: center;
+	z-index: 2;
+}
+
+.orbit__core-food .food {
+	filter: drop-shadow(0 0 26px rgba(124, 255, 158, 0.65));
+	animation: he-float 6s ease-in-out infinite;
+}
+
+.orbit__ring {
+	position: absolute;
+	inset: 0;
+	border: 1px dashed rgba(124, 255, 158, 0.4);
+	border-radius: 50%;
+	animation: he-spin 42s linear infinite;
+}
+
+.orbit__ring--inner {
+	inset: 14%;
+	border-style: solid;
+	border-color: rgba(52, 229, 255, 0.22);
+	animation-duration: 28s;
+	animation-direction: reverse;
+}
+
+.orbit__satellites {
+	position: absolute;
+	inset: 0;
+	animation: he-spin 30s linear infinite;
+}
+
+.orbit__item {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 62px;
+	margin: -31px 0 0 -31px;
+	transform: rotate(var(--angle)) translate(var(--radius)) rotate(calc(-1 * var(--angle)));
+}
+
+.orbit__item .food {
+	filter: drop-shadow(0 0 16px rgba(52, 229, 255, 0.45));
+	animation: he-spin-back 30s linear infinite;
+}
+
+/* Bandeau défilant
+   -------------------------------------------------- */
+
+.marquee {
+	position: relative;
+	overflow: hidden;
+	padding: 22px 0;
+	border-block: 1px solid var(--he-line);
+	background: rgba(4, 10, 14, 0.55);
+}
+
+.marquee__track {
+	display: flex;
+	width: max-content;
+	animation: he-marquee 34s linear infinite;
+}
+
+.marquee:hover .marquee__track {
+	animation-play-state: paused;
+}
+
+.marquee__item {
+	display: inline-flex;
+	align-items: center;
+	gap: 14px;
+	padding-inline: 28px;
+	font-family: var(--he-mono);
+	font-size: 0.86rem;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: var(--he-muted);
+	white-space: nowrap;
+}
+
+.marquee__item .food {
+	width: 30px;
+}
+
+.marquee__item span {
+	color: var(--he-text);
+}
+
+/* Assemblage du bol au scroll
+   -------------------------------------------------- */
+
+.assembly {
+	position: relative;
+	width: min(460px, 88vw);
+	aspect-ratio: 1;
+	margin-inline: auto;
+}
+
+.assembly__bowl {
+	position: absolute;
+	left: 50%;
+	bottom: 4%;
+	width: 82%;
+	transform: translateX(-50%);
+}
+
+.assembly__bowl .food {
+	filter: drop-shadow(0 0 34px rgba(52, 229, 255, 0.4));
+}
+
+.assembly__item {
+	position: absolute;
+	left: var(--x);
+	top: var(--y);
+	width: var(--size, 74px);
+	opacity: 0;
+	transform: translate3d(0, -220px, 0) scale(0.4) rotate(-40deg);
+	transition: transform 1s cubic-bezier(0.22, 1.15, 0.32, 1), opacity 0.5s ease;
+	transition-delay: var(--delay, 0s);
+}
+
+.assembly.is-visible .assembly__item {
+	opacity: 1;
+	transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+}
+
+.assembly.is-visible .assembly__item .food {
+	animation: he-float var(--duration, 7s) ease-in-out infinite;
+	animation-delay: var(--delay, 0s);
+}
+
+.assembly__glow {
+	position: absolute;
+	left: 50%;
+	bottom: 6%;
+	width: 70%;
+	aspect-ratio: 2 / 1;
+	transform: translateX(-50%);
+	background: radial-gradient(ellipse, rgba(124, 255, 158, 0.35), transparent 70%);
+	filter: blur(24px);
+	animation: he-pulse 4.5s ease-in-out infinite;
+}
+
+/* Révélation au défilement
+   -------------------------------------------------- */
+
+[data-reveal] {
+	opacity: 0;
+	transform: translateY(30px);
+	transition: opacity 0.75s ease, transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+	transition-delay: var(--delay, 0s);
+}
+
+[data-reveal].is-visible {
+	opacity: 1;
+	transform: none;
+}
+
+/* Balayage lumineux des cartes
+   -------------------------------------------------- */
+
+.healtheat-dish__media::after,
+.dish-single__media::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(180deg, transparent, rgba(124, 255, 158, 0.18), transparent);
+	opacity: 0;
+	pointer-events: none;
+}
+
+.healtheat-dish:hover .healtheat-dish__media::after,
+.dish-single__media:hover::after {
+	animation: he-scan 1.5s ease-in-out;
+}
+
+.healtheat-dish__placeholder .food {
+	width: 58%;
+	margin-inline: auto;
+	filter: drop-shadow(0 0 18px rgba(52, 229, 255, 0.35));
+}
+
+.healtheat-dish__placeholder .food.is-spinning {
+	animation: he-float 7s ease-in-out infinite;
+}
+
+.healtheat-dish:hover .healtheat-dish__placeholder .food {
+	animation: he-spin 6s linear infinite;
+}
+
+/* Compteurs et curseurs
+   -------------------------------------------------- */
+
+.stat__value,
+.nutrition__list strong {
+	font-variant-numeric: tabular-nums;
+}
+
+.cursor-blink {
+	display: inline-block;
+	width: 0.6ch;
+	color: var(--he-neon);
+	animation: he-blink 1.1s steps(1) infinite;
+}
+
+.hero__title .word {
+	display: inline-block;
+	animation: he-rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+	animation-delay: calc(var(--i) * 90ms);
+}
+
+/* Accessibilité : on coupe tout
+   -------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+	}
+
+	[data-reveal],
+	.assembly__item,
+	.hero__title .word {
+		opacity: 1 !important;
+		transform: none !important;
+	}
+
+	.he-backdrop__blob,
+	.food-field {
+		display: none;
+	}
+}

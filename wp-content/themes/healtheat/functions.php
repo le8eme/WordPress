@@ -7,7 +7,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'HEALTHEAT_THEME_VERSION', '1.0.0' );
+define( 'HEALTHEAT_THEME_VERSION', '2.0.0' );
+
+require_once get_template_directory() . '/inc/food-svg.php';
 
 /**
  * Theme setup.
@@ -69,7 +71,9 @@ add_action( 'after_setup_theme', 'healtheat_content_width', 0 );
  */
 function healtheat_theme_assets() {
 	wp_enqueue_style( 'healtheat-theme', get_stylesheet_uri(), array(), HEALTHEAT_THEME_VERSION );
+	wp_enqueue_style( 'healtheat-animations', get_template_directory_uri() . '/assets/css/animations.css', array( 'healtheat-theme' ), HEALTHEAT_THEME_VERSION );
 	wp_enqueue_script( 'healtheat-navigation', get_template_directory_uri() . '/assets/js/navigation.js', array(), HEALTHEAT_THEME_VERSION, true );
+	wp_enqueue_script( 'healtheat-animations', get_template_directory_uri() . '/assets/js/animations.js', array(), HEALTHEAT_THEME_VERSION, true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
@@ -139,8 +143,8 @@ function healtheat_customize_register( $wp_customize ) {
 			'type'    => 'text',
 		),
 		'healtheat_hero_title'    => array(
-			'label'   => __( 'Titre principal', 'healtheat-theme' ),
-			'default' => __( 'Manger sainement, sans y passer sa pause déjeuner.', 'healtheat-theme' ),
+			'label'   => __( 'Titre principal (entourez un mot d\'astérisques pour le mettre en dégradé)', 'healtheat-theme' ),
+			'default' => __( 'Manger *sainement*, sans y passer sa pause déjeuner.', 'healtheat-theme' ),
 			'type'    => 'textarea',
 		),
 		'healtheat_hero_text'     => array(
@@ -312,6 +316,88 @@ function healtheat_excerpt_more() {
 	return '…';
 }
 add_filter( 'excerpt_more', 'healtheat_excerpt_more' );
+
+/**
+ * Wraps each word of a title so it can rise one after the other.
+ *
+ * The `<em>` markers of the source string are kept to highlight a segment.
+ *
+ * @param string $text Raw title.
+ * @return string
+ */
+function healtheat_animated_title( $text ) {
+	$words  = preg_split( '/\s+/', trim( wp_strip_all_tags( $text, false ) ) );
+	$output = '';
+
+	foreach ( (array) $words as $index => $word ) {
+		if ( '' === $word ) {
+			continue;
+		}
+
+		/*
+		 * Le segment entre astérisques est mis en dégradé. La ponctuation
+		 * qui colle au mot — « *sainement*, » — est conservée telle quelle.
+		 */
+		if ( preg_match( '/^(.*?)\*(.+?)\*(.*)$/u', $word, $matches ) ) {
+			$content = esc_html( $matches[1] ) . '<em>' . esc_html( $matches[2] ) . '</em>' . esc_html( $matches[3] );
+		} else {
+			$content = esc_html( $word );
+		}
+
+		$output .= sprintf(
+			'<span class="word" style="--i:%1$d">%2$s</span> ',
+			(int) $index,
+			$content
+		);
+	}
+
+	return trim( $output );
+}
+
+/**
+ * Prints the animated background layers.
+ *
+ * @return void
+ */
+function healtheat_backdrop() {
+	?>
+	<div class="he-backdrop" aria-hidden="true">
+		<div class="he-backdrop__grid"></div>
+		<div class="he-backdrop__blob he-backdrop__blob--1"></div>
+		<div class="he-backdrop__blob he-backdrop__blob--2"></div>
+		<div class="he-backdrop__blob he-backdrop__blob--3"></div>
+	</div>
+	<?php
+}
+
+/**
+ * Prints the floating food layer of the hero.
+ *
+ * @return void
+ */
+function healtheat_food_field() {
+	$items = array(
+		array( 'leaf', '8%', '14%', 74, 0.9, '0s', 12 ),
+		array( 'tomato', '82%', '10%', 62, 0.55, '-2.5s', 15 ),
+		array( 'citrus', '68%', '72%', 88, 0.75, '-5s', 18 ),
+		array( 'berry', '14%', '78%', 54, 0.4, '-1.5s', 13 ),
+		array( 'grain', '46%', '6%', 48, 0.35, '-3.5s', 16 ),
+		array( 'carrot', '90%', '46%', 58, 0.6, '-6s', 14 ),
+	);
+	?>
+	<div class="food-field" aria-hidden="true">
+		<?php foreach ( $items as $index => $item ) : ?>
+			<div class="food-field__item<?php echo 0 === $index % 2 ? '' : ' food-field__item--reverse'; ?>"
+				data-parallax="<?php echo esc_attr( $item[4] ); ?>"
+				style="left:<?php echo esc_attr( $item[1] ); ?>;top:<?php echo esc_attr( $item[2] ); ?>;--size:<?php echo esc_attr( $item[3] ); ?>px;--delay:<?php echo esc_attr( $item[5] ); ?>;--duration:<?php echo esc_attr( $item[6] ); ?>s;--rotation:<?php echo esc_attr( $item[6] * 3 ); ?>s">
+				<span class="food-field__float">
+					<?php echo healtheat_food_svg( $item[0] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</span>
+			</div>
+		<?php endforeach; ?>
+	</div>
+	<?php
+}
 
 /**
  * Adds a body class when the Health'eat plugin is missing.

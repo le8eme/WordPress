@@ -4,26 +4,32 @@
 	"settings": {
 		"appearanceTools": true,
 		"layout": {
-			"contentSize": "760px",
-			"wideSize": "1180px"
+			"contentSize": "780px",
+			"wideSize": "1220px"
 		},
 		"color": {
 			"custom": true,
 			"defaultPalette": false,
 			"palette": [
-				{ "slug": "green", "color": "#1f7a4d", "name": "Vert Health'eat" },
-				{ "slug": "green-dark", "color": "#14532d", "name": "Vert profond" },
-				{ "slug": "lime", "color": "#a3d977", "name": "Citron vert" },
-				{ "slug": "cream", "color": "#f7f5ef", "name": "Crème" },
-				{ "slug": "ink", "color": "#23291f", "name": "Encre" },
-				{ "slug": "muted", "color": "#6b7264", "name": "Gris sauge" },
-				{ "slug": "white", "color": "#ffffff", "name": "Blanc" }
+				{ "slug": "neon", "color": "#7cff9e", "name": "Vert néon" },
+				{ "slug": "cyan", "color": "#34e5ff", "name": "Cyan" },
+				{ "slug": "violet", "color": "#b07cff", "name": "Violet" },
+				{ "slug": "lime", "color": "#c8ff4d", "name": "Citron électrique" },
+				{ "slug": "void", "color": "#04070c", "name": "Nuit" },
+				{ "slug": "deep", "color": "#071019", "name": "Nuit profonde" },
+				{ "slug": "text", "color": "#e6f1ec", "name": "Texte" },
+				{ "slug": "muted", "color": "#8ea3a0", "name": "Texte discret" }
 			],
 			"gradients": [
 				{
-					"slug": "fresh",
-					"gradient": "linear-gradient(160deg, #eef5e9 0%, #f7f5ef 60%)",
-					"name": "Fraîcheur"
+					"slug": "neon",
+					"gradient": "linear-gradient(120deg, #7cff9e 0%, #34e5ff 100%)",
+					"name": "Néon"
+				},
+				{
+					"slug": "aurora",
+					"gradient": "linear-gradient(140deg, #7cff9e 0%, #34e5ff 55%, #b07cff 100%)",
+					"name": "Aurore"
 				}
 			]
 		},
@@ -33,19 +39,19 @@
 				{
 					"slug": "sans",
 					"name": "Sans (système)",
-					"fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif"
+					"fontFamily": "\"Segoe UI\", Roboto, -apple-system, BlinkMacSystemFont, \"Helvetica Neue\", Arial, sans-serif"
 				},
 				{
-					"slug": "serif",
-					"name": "Serif éditoriale",
-					"fontFamily": "\"Iowan Old Style\", \"Palatino Linotype\", Palatino, Georgia, \"Times New Roman\", serif"
+					"slug": "mono",
+					"name": "Mono (données)",
+					"fontFamily": "ui-monospace, SFMono-Regular, \"SF Mono\", Menlo, Consolas, \"Liberation Mono\", monospace"
 				}
 			],
 			"fontSizes": [
 				{ "slug": "small", "size": "0.88rem", "name": "Petit" },
 				{ "slug": "medium", "size": "1.06rem", "name": "Moyen" },
-				{ "slug": "large", "size": "1.5rem", "name": "Grand" },
-				{ "slug": "x-large", "size": "2.4rem", "name": "Très grand" }
+				{ "slug": "large", "size": "1.55rem", "name": "Grand" },
+				{ "slug": "x-large", "size": "2.6rem", "name": "Très grand" }
 			]
 		},
 		"spacing": {
@@ -54,46 +60,35 @@
 	},
 	"styles": {
 		"color": {
-			"background": "var(--wp--preset--color--cream)",
-			"text": "var(--wp--preset--color--ink)"
+			"background": "var(--wp--preset--color--void)",
+			"text": "var(--wp--preset--color--text)"
 		},
 		"typography": {
 			"fontFamily": "var(--wp--preset--font-family--sans)",
 			"fontSize": "var(--wp--preset--font-size--medium)",
-			"lineHeight": "1.65"
+			"lineHeight": "1.7"
 		},
 		"elements": {
 			"link": {
-				"color": { "text": "var(--wp--preset--color--green)" }
+				"color": { "text": "var(--wp--preset--color--neon)" }
 			},
 			"h1": {
-				"typography": {
-					"fontFamily": "var(--wp--preset--font-family--serif)",
-					"fontWeight": "600",
-					"lineHeight": "1.15"
-				}
+				"typography": { "fontWeight": "700", "lineHeight": "1.08", "letterSpacing": "-0.025em" }
 			},
 			"h2": {
-				"typography": {
-					"fontFamily": "var(--wp--preset--font-family--serif)",
-					"fontWeight": "600",
-					"lineHeight": "1.2"
-				}
+				"typography": { "fontWeight": "700", "lineHeight": "1.12", "letterSpacing": "-0.025em" }
 			},
 			"h3": {
-				"typography": {
-					"fontFamily": "var(--wp--preset--font-family--serif)",
-					"fontWeight": "600"
-				}
+				"typography": { "fontWeight": "700", "letterSpacing": "-0.02em" }
 			},
 			"button": {
 				"color": {
-					"background": "var(--wp--preset--color--green)",
-					"text": "var(--wp--preset--color--white)"
+					"background": "var(--wp--preset--color--neon)",
+					"text": "var(--wp--preset--color--void)"
 				},
 				"border": { "radius": "999px" },
 				"spacing": {
-					"padding": { "top": "12px", "bottom": "12px", "left": "26px", "right": "26px" }
+					"padding": { "top": "12px", "bottom": "12px", "left": "28px", "right": "28px" }
 				}
 			}
 		}

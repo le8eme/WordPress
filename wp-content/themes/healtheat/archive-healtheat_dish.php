@@ -11,7 +11,8 @@ get_header();
 ?>
 
 <div class="wrap">
-	<header class="page-header page-header--menu">
+	<header class="page-header page-header--menu" data-reveal>
+		<p class="eyebrow"><?php esc_html_e( 'Health\'eat', 'healtheat-theme' ); ?></p>
 		<h1 class="page-title">
 			<?php
 			if ( is_tax() ) {

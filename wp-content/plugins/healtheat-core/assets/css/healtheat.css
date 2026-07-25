@@ -15,6 +15,17 @@
 	--healtheat-border: #e2e3dc;
 	--healtheat-radius: 16px;
 	--healtheat-shadow: 0 10px 30px rgba(20, 40, 25, 0.08);
+
+	/* Surfaces : un thème peut les redéfinir pour changer entièrement l'ambiance. */
+	--healtheat-surface: #ffffff;
+	--healtheat-surface-soft: var(--healtheat-cream);
+	--healtheat-surface-blur: none;
+	--healtheat-text: var(--healtheat-ink);
+	--healtheat-on-accent: #ffffff;
+	--healtheat-tag-bg: #eaf5e6;
+	--healtheat-tag-text: var(--healtheat-green-dark);
+	--healtheat-toast-bg: var(--healtheat-green-dark);
+	--healtheat-toast-text: #ffffff;
 }
 
 /* Grille de la carte
@@ -31,10 +42,11 @@
 .healtheat-dish {
 	display: flex;
 	flex-direction: column;
-	background: #fff;
+	background: var(--healtheat-surface);
 	border: 1px solid var(--healtheat-border);
 	border-radius: var(--healtheat-radius);
 	overflow: hidden;
+	backdrop-filter: var(--healtheat-surface-blur);
 	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -50,7 +62,7 @@
 .healtheat-dish__media {
 	display: block;
 	aspect-ratio: 4 / 3;
-	background: var(--healtheat-cream);
+	background: var(--healtheat-surface-soft);
 	overflow: hidden;
 }
 
@@ -85,7 +97,7 @@
 }
 
 .healtheat-dish__title a {
-	color: var(--healtheat-ink);
+	color: var(--healtheat-text);
 	text-decoration: none;
 }
 
@@ -110,8 +122,8 @@
 }
 
 .healtheat-tag {
-	background: #eaf5e6;
-	color: var(--healtheat-green-dark);
+	background: var(--healtheat-tag-bg);
+	color: var(--healtheat-tag-text);
 	border-radius: 999px;
 	padding: 3px 10px;
 	font-size: 0.75rem;
@@ -132,7 +144,7 @@
 }
 
 .healtheat-macros strong {
-	color: var(--healtheat-ink);
+	color: var(--healtheat-text);
 	font-size: 0.9rem;
 }
 
@@ -175,7 +187,7 @@
 	border: 0;
 	border-radius: 999px;
 	background: var(--healtheat-green);
-	color: #fff;
+	color: var(--healtheat-on-accent);
 	font-size: 0.95rem;
 	font-weight: 600;
 	line-height: 1.2;
@@ -187,7 +199,7 @@
 .healtheat-button:hover,
 .healtheat-button:focus {
 	background: var(--healtheat-green-dark);
-	color: #fff;
+	color: var(--healtheat-on-accent);
 }
 
 .healtheat-button[disabled] {
@@ -226,8 +238,8 @@
 	padding: 8px 16px;
 	border: 1px solid var(--healtheat-border);
 	border-radius: 999px;
-	background: #fff;
-	color: var(--healtheat-ink);
+	background: var(--healtheat-surface);
+	color: var(--healtheat-text);
 	font-size: 0.88rem;
 	font-weight: 600;
 	cursor: pointer;
@@ -242,7 +254,7 @@
 .healtheat-chip.is-active {
 	background: var(--healtheat-green);
 	border-color: var(--healtheat-green);
-	color: #fff;
+	color: var(--healtheat-on-accent);
 }
 
 .healtheat-chip--diet.is-active {
@@ -260,7 +272,7 @@
 .healtheat-empty,
 .healtheat-notice {
 	padding: 24px;
-	background: var(--healtheat-cream);
+	background: var(--healtheat-surface-soft);
 	border-radius: var(--healtheat-radius);
 	text-align: center;
 	color: var(--healtheat-muted);
@@ -287,7 +299,7 @@
 	border: 0;
 	border-radius: 50%;
 	background: var(--healtheat-green);
-	color: #fff;
+	color: var(--healtheat-on-accent);
 	font-size: 24px;
 	cursor: pointer;
 	box-shadow: var(--healtheat-shadow);
@@ -302,7 +314,7 @@
 	padding: 0 6px;
 	border-radius: 999px;
 	background: var(--healtheat-ink);
-	color: #fff;
+	color: var(--healtheat-on-accent);
 	font-size: 12px;
 	font-weight: 700;
 	line-height: 24px;
@@ -312,10 +324,11 @@
 	order: -1;
 	width: min(340px, calc(100vw - 48px));
 	padding: 20px;
-	background: #fff;
+	background: var(--healtheat-surface);
 	border: 1px solid var(--healtheat-border);
 	border-radius: var(--healtheat-radius);
 	box-shadow: var(--healtheat-shadow);
+	backdrop-filter: var(--healtheat-surface-blur);
 }
 
 .healtheat-cart__title {
@@ -353,8 +366,8 @@
 	height: 26px;
 	border: 1px solid var(--healtheat-border);
 	border-radius: 50%;
-	background: #fff;
-	color: var(--healtheat-ink);
+	background: var(--healtheat-surface);
+	color: var(--healtheat-text);
 	font-size: 15px;
 	line-height: 1;
 	cursor: pointer;
@@ -404,8 +417,8 @@
 	z-index: 1000;
 	padding: 12px 22px;
 	border-radius: 999px;
-	background: var(--healtheat-green-dark);
-	color: #fff;
+	background: var(--healtheat-toast-bg);
+	color: var(--healtheat-toast-text);
 	font-size: 0.9rem;
 	font-weight: 600;
 	box-shadow: var(--healtheat-shadow);
@@ -435,9 +448,10 @@
 .healtheat-checkout__cart,
 .healtheat-checkout__form {
 	padding: 28px;
-	background: #fff;
+	background: var(--healtheat-surface);
 	border: 1px solid var(--healtheat-border);
 	border-radius: var(--healtheat-radius);
+	backdrop-filter: var(--healtheat-surface-blur);
 }
 
 .healtheat-checkout__cart h2,
@@ -470,8 +484,8 @@
 	padding: 11px 14px;
 	border: 1px solid var(--healtheat-border);
 	border-radius: 10px;
-	background: #fff;
-	color: var(--healtheat-ink);
+	background: var(--healtheat-surface);
+	color: var(--healtheat-text);
 	font-size: 0.95rem;
 	font-family: inherit;
 }
@@ -511,7 +525,7 @@
 
 .healtheat-success {
 	padding: 40px;
-	background: #eaf5e6;
+	background: var(--healtheat-tag-bg);
 	border-radius: var(--healtheat-radius);
 	text-align: center;
 }

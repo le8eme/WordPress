@@ -173,7 +173,17 @@ class Healtheat_Shortcodes {
 				<?php if ( $data['image'] ) : ?>
 					<img src="<?php echo esc_url( $data['image'] ); ?>" alt="<?php echo esc_attr( $data['name'] ); ?>" loading="lazy" />
 				<?php else : ?>
-					<span class="healtheat-dish__placeholder" aria-hidden="true">🥗</span>
+					<span class="healtheat-dish__placeholder" aria-hidden="true">
+						<?php
+						/**
+						 * Filters the visual shown when a dish has no photo.
+						 *
+						 * @param string $placeholder Markup or emoji.
+						 * @param int    $dish_id     Dish ID.
+						 */
+						echo wp_kses( apply_filters( 'healtheat_dish_placeholder', '🥗', $data['id'] ), healtheat_svg_allowed_html() );
+						?>
+					</span>
 				<?php endif; ?>
 			</a>
 
