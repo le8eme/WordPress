@@ -32,6 +32,15 @@ Les plats s'affichent avec de vraies photos dès qu'une image mise en avant leur
 * **photos supplémentaires** — un encart « Photos supplémentaires » sur la fiche du plat permet d'ajouter des vues secondaires, affichées en vignettes cliquables ;
 * **affectation en masse** — l'écran **Health'eat → Photos** liste tous les plats, signale ceux sans photo et permet, pour chacun, soit de choisir une image de la médiathèque, soit de coller l'adresse publique d'une photo à télécharger (vérifiée sur son type MIME réel, pas seulement son extension).
 
+== Photos provisoires ==
+
+En attendant un vrai shooting, l'écran **Health'eat → Photos** propose deux façons de remplir la carte, qui ne touchent qu'aux plats sans photo :
+
+* **Importer des photos libres** — interroge l'API de Wikimedia Commons, ne retient que les licences autorisant l'usage commercial (CC0, domaine public, CC BY, CC BY-SA ; les mentions NC, ND, fair use et non-free sont écartées), télécharge la première image exploitable et enregistre l'auteur, la licence et la page source. Ce crédit s'affiche sous la photo sur la fiche du plat, comme ces licences l'exigent ;
+* **Générer des visuels de remplacement** — aucune connexion requise : le site fabrique un aplat dégradé par plat, dans les teintes de la palette (vert, cyan, violet), avec une silhouette de bol. Ce n'est pas une photographie et cela ne prétend pas l'être.
+
+Toutes les images posées ainsi sont marquées comme provisoires : elles portent la mention « provisoire » dans le tableau, un rappel s'affiche tant qu'il en reste en ligne, et le bouton **Supprimer les photos provisoires** les retire toutes — y compris des plats — une fois les vraies photos prêtes.
+
 Photos achetées sur une banque payante (iStock, Getty, Adobe Stock…) : téléversez les fichiers dans la médiathèque, puis affectez-les depuis cet écran. Les liens de téléchargement de ces banques sont liés à votre session et ne peuvent pas servir à l'import par adresse ; les aperçus filigranés des pages de recherche ne sont pas utilisables.
 
 Quand un plat n'a pas encore de photo, le thème affiche une illustration de secours via le filtre `healtheat_dish_placeholder`.

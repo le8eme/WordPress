@@ -46,6 +46,11 @@ while ( have_posts() ) :
 						<?php endif; ?>
 					</div>
 
+					<?php
+					// L'attribution est obligatoire pour les licences CC BY / BY-SA.
+					echo healtheat_photo_credit_html( (int) get_post_thumbnail_id() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					?>
+
 					<?php if ( count( $healtheat_photos ) > 1 ) : ?>
 						<ul class="dish-thumbs">
 							<?php foreach ( $healtheat_photos as $healtheat_position => $healtheat_photo_id ) : ?>

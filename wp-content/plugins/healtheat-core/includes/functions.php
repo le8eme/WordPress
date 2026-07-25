@@ -200,6 +200,65 @@ function healtheat_dish_photo( $dish_id, $size = 'healtheat-card', $attrs = arra
 }
 
 /**
+ * Returns the credit stored with a photo, if any.
+ *
+ * @param int $attachment_id Attachment ID.
+ * @return array{author:string,license:string,source:string}|null
+ */
+function healtheat_get_photo_credit( $attachment_id ) {
+	$credit = get_post_meta( (int) $attachment_id, Healtheat_Provisional::CREDIT, true );
+
+	if ( ! is_array( $credit ) || empty( $credit['license'] ) ) {
+		return null;
+	}
+
+	return array(
+		'author'  => (string) ( $credit['author'] ?? '' ),
+		'license' => (string) $credit['license'],
+		'source'  => (string) ( $credit['source'] ?? '' ),
+	);
+}
+
+/**
+ * Renders the credit line required by the licence of a photo.
+ *
+ * @param int $attachment_id Attachment ID.
+ * @return string
+ */
+function healtheat_photo_credit_html( $attachment_id ) {
+	$credit = healtheat_get_photo_credit( $attachment_id );
+
+	if ( ! $credit ) {
+		return '';
+	}
+
+	$label = $credit['author']
+		? sprintf(
+			/* translators: 1: photographer, 2: licence name. */
+			__( 'Photo : %1$s — %2$s', 'healtheat' ),
+			$credit['author'],
+			$credit['license']
+		)
+		: sprintf(
+			/* translators: %s: licence name. */
+			__( 'Photo sous licence %s', 'healtheat' ),
+			$credit['license']
+		);
+
+	if ( $credit['source'] ) {
+		$label = sprintf(
+			'<a href="%1$s" rel="noopener noreferrer nofollow" target="_blank">%2$s</a>',
+			esc_url( $credit['source'] ),
+			esc_html( $label )
+		);
+	} else {
+		$label = esc_html( $label );
+	}
+
+	return '<p class="healtheat-credit">' . $label . '</p>';
+}
+
+/**
  * Returns the photo IDs of a dish: featured image first, then its gallery.
  *
  * @param int $dish_id Dish ID.

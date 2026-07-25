@@ -915,6 +915,20 @@ img {
 	top: 104px;
 }
 
+.healtheat-credit {
+	margin: 10px 0 0;
+	font-family: var(--he-mono);
+	font-size: 0.7rem;
+	letter-spacing: 0.06em;
+	color: var(--he-muted);
+}
+
+.healtheat-credit a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
 .dish-thumbs {
 	display: flex;
 	flex-wrap: wrap;

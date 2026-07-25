@@ -319,6 +319,10 @@ class Healtheat_Media {
 				?>
 			</p>
 
+			<?php self::render_provisional_panel(); ?>
+
+			<h2><?php esc_html_e( 'Photo par plat', 'healtheat' ); ?></h2>
+
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="healtheat_import_photos" />
 				<?php wp_nonce_field( 'healtheat_import_photos' ); ?>
@@ -337,6 +341,9 @@ class Healtheat_Media {
 								<td data-healtheat-preview>
 									<?php if ( has_post_thumbnail( $dish ) ) : ?>
 										<?php echo wp_get_attachment_image( get_post_thumbnail_id( $dish ), array( 90, 68 ) ); ?>
+										<?php if ( get_post_meta( get_post_thumbnail_id( $dish ), Healtheat_Provisional::FLAG, true ) ) : ?>
+											<br /><span style="font-size:11px;color:#8a5300"><?php esc_html_e( 'provisoire', 'healtheat' ); ?></span>
+										<?php endif; ?>
 									<?php else : ?>
 										<span style="color:#b32d2e">— <?php esc_html_e( 'aucune', 'healtheat' ); ?></span>
 									<?php endif; ?>
@@ -367,6 +374,67 @@ class Healtheat_Media {
 
 				<?php submit_button( __( 'Importer les photos renseignées', 'healtheat' ) ); ?>
 			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Renders the temporary photo panel, used before the real photo shoot.
+	 *
+	 * @return void
+	 */
+	protected static function render_provisional_panel() {
+		$provisional = count( Healtheat_Provisional::get_provisional_ids() );
+		?>
+		<div class="card" style="max-width:820px;padding:8px 20px 20px">
+			<h2><?php esc_html_e( 'En attendant le shooting', 'healtheat' ); ?></h2>
+
+			<p>
+				<?php esc_html_e( 'Deux façons de ne pas laisser la carte vide avant vos vraies photos. Les visuels ajoutés ici sont marqués comme provisoires : une fois le shooting fait, un seul bouton les retire tous.', 'healtheat' ); ?>
+			</p>
+
+			<?php if ( $provisional ) : ?>
+				<p style="padding:10px 14px;background:#fff4e5;border-left:4px solid #d68000">
+					<?php
+					printf(
+						/* translators: %d: number of provisional photos. */
+						esc_html( _n( '%d photo provisoire est actuellement en ligne.', '%d photos provisoires sont actuellement en ligne.', $provisional, 'healtheat' ) ),
+						(int) $provisional
+					);
+					?>
+				</p>
+			<?php endif; ?>
+
+			<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start">
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+					<input type="hidden" name="action" value="healtheat_provisional_fetch" />
+					<?php wp_nonce_field( 'healtheat_provisional_fetch' ); ?>
+					<?php submit_button( __( 'Importer des photos libres', 'healtheat' ), 'primary', 'submit', false ); ?>
+				</form>
+
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+					<input type="hidden" name="action" value="healtheat_provisional_generate" />
+					<?php wp_nonce_field( 'healtheat_provisional_generate' ); ?>
+					<?php submit_button( __( 'Générer des visuels de remplacement', 'healtheat' ), 'secondary', 'submit', false ); ?>
+				</form>
+
+				<?php if ( $provisional ) : ?>
+					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"
+						onsubmit="return confirm('<?php echo esc_js( __( 'Supprimer définitivement toutes les photos provisoires ?', 'healtheat' ) ); ?>');">
+						<input type="hidden" name="action" value="healtheat_provisional_purge" />
+						<?php wp_nonce_field( 'healtheat_provisional_purge' ); ?>
+						<?php submit_button( __( 'Supprimer les photos provisoires', 'healtheat' ), 'delete', 'submit', false ); ?>
+					</form>
+				<?php endif; ?>
+			</div>
+
+			<p class="description" style="margin-top:14px">
+				<?php esc_html_e( '« Importer des photos libres » interroge Wikimedia Commons et ne retient que les images dont la licence autorise un usage commercial (CC0, domaine public, CC BY, CC BY-SA). L\'auteur et la licence sont enregistrés avec la photo et affichés sous le plat, comme ces licences l\'exigent. Les deux actions ne concernent que les plats qui n\'ont pas encore de photo.', 'healtheat' ); ?>
+			</p>
+
+			<p class="description">
+				<?php esc_html_e( '« Générer des visuels de remplacement » ne demande aucun accès à Internet : le site fabrique lui-même un aplat dégradé par plat. Ce n\'est pas une photographie et cela ne prétend pas l\'être — juste de quoi tenir jusqu\'au shooting.', 'healtheat' ); ?>
+			</p>
 		</div>
 		<?php
 	}
@@ -528,16 +596,15 @@ class Healtheat_Media {
 		delete_transient( $key );
 
 		if ( ! empty( $result['done'] ) ) {
-			printf(
-				'<div class="notice notice-success is-dismissible"><p>%s</p></div>',
-				esc_html(
-					sprintf(
-						/* translators: %d: number of imported photos. */
-						_n( '%d photo importée.', '%d photos importées.', (int) $result['done'], 'healtheat' ),
-						(int) $result['done']
-					)
-				)
-			);
+			$message = ! empty( $result['message'] )
+				? $result['message']
+				: sprintf(
+					/* translators: %d: number of imported photos. */
+					_n( '%d photo importée.', '%d photos importées.', (int) $result['done'], 'healtheat' ),
+					(int) $result['done']
+				);
+
+			printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html( $message ) );
 		}
 
 		foreach ( (array) ( $result['errors'] ?? array() ) as $error ) {
