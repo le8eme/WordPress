@@ -1,0 +1,551 @@
+/**
+ * Health'eat — styles front-end du plugin.
+ *
+ * Les couleurs passent par des variables : un thème peut les redéfinir
+ * sur :root sans toucher à cette feuille.
+ */
+
+:root {
+	--healtheat-green: #1f7a4d;
+	--healtheat-green-dark: #14532d;
+	--healtheat-lime: #a3d977;
+	--healtheat-cream: #f7f5ef;
+	--healtheat-ink: #23291f;
+	--healtheat-muted: #6b7264;
+	--healtheat-border: #e2e3dc;
+	--healtheat-radius: 16px;
+	--healtheat-shadow: 0 10px 30px rgba(20, 40, 25, 0.08);
+}
+
+/* Grille de la carte
+   -------------------------------------------------- */
+
+.healtheat-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 28px;
+	margin: 0;
+	padding: 0;
+}
+
+.healtheat-dish {
+	display: flex;
+	flex-direction: column;
+	background: #fff;
+	border: 1px solid var(--healtheat-border);
+	border-radius: var(--healtheat-radius);
+	overflow: hidden;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.healtheat-dish:hover {
+	transform: translateY(-4px);
+	box-shadow: var(--healtheat-shadow);
+}
+
+.healtheat-dish.is-unavailable {
+	opacity: 0.6;
+}
+
+.healtheat-dish__media {
+	display: block;
+	aspect-ratio: 4 / 3;
+	background: var(--healtheat-cream);
+	overflow: hidden;
+}
+
+.healtheat-dish__media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.healtheat-dish__placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	font-size: 56px;
+}
+
+.healtheat-dish__body {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 20px;
+	flex: 1;
+}
+
+.healtheat-dish__title {
+	margin: 0;
+	font-size: 1.15rem;
+	line-height: 1.3;
+}
+
+.healtheat-dish__title a {
+	color: var(--healtheat-ink);
+	text-decoration: none;
+}
+
+.healtheat-dish__title a:hover {
+	color: var(--healtheat-green);
+}
+
+.healtheat-dish__excerpt {
+	margin: 0;
+	color: var(--healtheat-muted);
+	font-size: 0.92rem;
+	line-height: 1.5;
+}
+
+.healtheat-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.healtheat-tag {
+	background: #eaf5e6;
+	color: var(--healtheat-green-dark);
+	border-radius: 999px;
+	padding: 3px 10px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+}
+
+.healtheat-macros {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin: 0;
+	padding: 10px 0 0;
+	list-style: none;
+	border-top: 1px dashed var(--healtheat-border);
+	font-size: 0.78rem;
+	color: var(--healtheat-muted);
+}
+
+.healtheat-macros strong {
+	color: var(--healtheat-ink);
+	font-size: 0.9rem;
+}
+
+.healtheat-allergens {
+	margin: 0;
+	font-size: 0.75rem;
+	color: var(--healtheat-muted);
+}
+
+.healtheat-dish__footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: auto;
+	padding-top: 12px;
+}
+
+.healtheat-price {
+	font-size: 1.2rem;
+	font-weight: 700;
+	color: var(--healtheat-green-dark);
+}
+
+.healtheat-unavailable {
+	font-size: 0.85rem;
+	color: var(--healtheat-muted);
+	font-style: italic;
+}
+
+/* Boutons
+   -------------------------------------------------- */
+
+.healtheat-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 10px 20px;
+	border: 0;
+	border-radius: 999px;
+	background: var(--healtheat-green);
+	color: #fff;
+	font-size: 0.95rem;
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background 0.2s ease;
+}
+
+.healtheat-button:hover,
+.healtheat-button:focus {
+	background: var(--healtheat-green-dark);
+	color: #fff;
+}
+
+.healtheat-button[disabled] {
+	opacity: 0.6;
+	cursor: progress;
+}
+
+.healtheat-button--primary {
+	width: 100%;
+	padding: 14px 24px;
+	font-size: 1rem;
+}
+
+.healtheat-link {
+	color: var(--healtheat-green);
+	font-weight: 600;
+}
+
+/* Filtres
+   -------------------------------------------------- */
+
+.healtheat-filters {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-bottom: 24px;
+}
+
+.healtheat-filters__group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.healtheat-chip {
+	padding: 8px 16px;
+	border: 1px solid var(--healtheat-border);
+	border-radius: 999px;
+	background: #fff;
+	color: var(--healtheat-ink);
+	font-size: 0.88rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.healtheat-chip:hover {
+	border-color: var(--healtheat-green);
+	color: var(--healtheat-green);
+}
+
+.healtheat-chip.is-active {
+	background: var(--healtheat-green);
+	border-color: var(--healtheat-green);
+	color: #fff;
+}
+
+.healtheat-chip--diet.is-active {
+	background: var(--healtheat-lime);
+	border-color: var(--healtheat-lime);
+	color: var(--healtheat-green-dark);
+}
+
+.healtheat-menu__count {
+	margin: 0 0 16px;
+	font-size: 0.85rem;
+	color: var(--healtheat-muted);
+}
+
+.healtheat-empty,
+.healtheat-notice {
+	padding: 24px;
+	background: var(--healtheat-cream);
+	border-radius: var(--healtheat-radius);
+	text-align: center;
+	color: var(--healtheat-muted);
+}
+
+/* Panier flottant
+   -------------------------------------------------- */
+
+.healtheat-cart {
+	position: fixed;
+	right: 24px;
+	bottom: 24px;
+	z-index: 999;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 12px;
+}
+
+.healtheat-cart__toggle {
+	position: relative;
+	width: 60px;
+	height: 60px;
+	border: 0;
+	border-radius: 50%;
+	background: var(--healtheat-green);
+	color: #fff;
+	font-size: 24px;
+	cursor: pointer;
+	box-shadow: var(--healtheat-shadow);
+}
+
+.healtheat-cart__count {
+	position: absolute;
+	top: -4px;
+	right: -4px;
+	min-width: 24px;
+	height: 24px;
+	padding: 0 6px;
+	border-radius: 999px;
+	background: var(--healtheat-ink);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 24px;
+}
+
+.healtheat-cart__panel {
+	order: -1;
+	width: min(340px, calc(100vw - 48px));
+	padding: 20px;
+	background: #fff;
+	border: 1px solid var(--healtheat-border);
+	border-radius: var(--healtheat-radius);
+	box-shadow: var(--healtheat-shadow);
+}
+
+.healtheat-cart__title {
+	margin: 0 0 12px;
+	font-size: 1rem;
+}
+
+.healtheat-cart__lines {
+	margin: 0 0 12px;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	max-height: 40vh;
+	overflow-y: auto;
+}
+
+.healtheat-cart__line {
+	display: grid;
+	grid-template-columns: 1fr auto auto;
+	align-items: center;
+	gap: 10px;
+	font-size: 0.9rem;
+}
+
+.healtheat-cart__controls {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.healtheat-qty {
+	width: 26px;
+	height: 26px;
+	border: 1px solid var(--healtheat-border);
+	border-radius: 50%;
+	background: #fff;
+	color: var(--healtheat-ink);
+	font-size: 15px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.healtheat-qty:hover {
+	border-color: var(--healtheat-green);
+	color: var(--healtheat-green);
+}
+
+.healtheat-cart__qty {
+	min-width: 18px;
+	text-align: center;
+	font-weight: 700;
+}
+
+.healtheat-cart__price {
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.healtheat-cart__total,
+.healtheat-checkout__total {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	margin: 0 0 16px;
+	padding-top: 12px;
+	border-top: 1px solid var(--healtheat-border);
+	font-size: 1.05rem;
+}
+
+.healtheat-cart__empty {
+	margin: 0 0 12px;
+	color: var(--healtheat-muted);
+	font-size: 0.9rem;
+}
+
+/* Notification
+   -------------------------------------------------- */
+
+.healtheat-toast {
+	position: fixed;
+	left: 50%;
+	bottom: 32px;
+	transform: translateX(-50%);
+	z-index: 1000;
+	padding: 12px 22px;
+	border-radius: 999px;
+	background: var(--healtheat-green-dark);
+	color: #fff;
+	font-size: 0.9rem;
+	font-weight: 600;
+	box-shadow: var(--healtheat-shadow);
+	transition: opacity 0.3s ease;
+}
+
+.healtheat-toast.is-leaving {
+	opacity: 0;
+}
+
+/* Tunnel de commande
+   -------------------------------------------------- */
+
+.healtheat-checkout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: 40px;
+	align-items: start;
+}
+
+@media (max-width: 782px) {
+	.healtheat-checkout {
+		grid-template-columns: 1fr;
+	}
+}
+
+.healtheat-checkout__cart,
+.healtheat-checkout__form {
+	padding: 28px;
+	background: #fff;
+	border: 1px solid var(--healtheat-border);
+	border-radius: var(--healtheat-radius);
+}
+
+.healtheat-checkout__cart h2,
+.healtheat-checkout__form h2 {
+	margin-top: 0;
+	font-size: 1.25rem;
+}
+
+.healtheat-checkout__min {
+	margin: -8px 0 16px;
+	font-size: 0.82rem;
+	color: var(--healtheat-muted);
+}
+
+.healtheat-field {
+	margin-bottom: 16px;
+}
+
+.healtheat-field label {
+	display: block;
+	margin-bottom: 6px;
+	font-size: 0.88rem;
+	font-weight: 600;
+}
+
+.healtheat-field input,
+.healtheat-field select,
+.healtheat-field textarea {
+	width: 100%;
+	padding: 11px 14px;
+	border: 1px solid var(--healtheat-border);
+	border-radius: 10px;
+	background: #fff;
+	color: var(--healtheat-ink);
+	font-size: 0.95rem;
+	font-family: inherit;
+}
+
+.healtheat-field input:focus,
+.healtheat-field select:focus,
+.healtheat-field textarea:focus {
+	outline: 2px solid var(--healtheat-lime);
+	outline-offset: 1px;
+	border-color: var(--healtheat-green);
+}
+
+.healtheat-field--hp {
+	position: absolute;
+	left: -9999px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+.healtheat-form__feedback {
+	margin: 0 0 12px;
+	font-size: 0.9rem;
+	min-height: 1.2em;
+}
+
+.healtheat-form__feedback.is-error {
+	color: #9b1c1c;
+	font-weight: 600;
+}
+
+.healtheat-form__legal {
+	margin: 12px 0 0;
+	font-size: 0.78rem;
+	color: var(--healtheat-muted);
+}
+
+.healtheat-success {
+	padding: 40px;
+	background: #eaf5e6;
+	border-radius: var(--healtheat-radius);
+	text-align: center;
+}
+
+.healtheat-success h2 {
+	margin-top: 0;
+	color: var(--healtheat-green-dark);
+	letter-spacing: 0.04em;
+}
+
+.healtheat-success__total {
+	font-size: 1.3rem;
+	font-weight: 700;
+	color: var(--healtheat-green-dark);
+}
+
+/* Horaires
+   -------------------------------------------------- */
+
+.healtheat-hours {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	max-width: 380px;
+}
+
+.healtheat-hours li {
+	display: flex;
+	justify-content: space-between;
+	padding: 8px 0;
+	border-bottom: 1px dashed var(--healtheat-border);
+	font-size: 0.95rem;
+}
+
+.healtheat-hours li:last-child {
+	border-bottom: 0;
+}
