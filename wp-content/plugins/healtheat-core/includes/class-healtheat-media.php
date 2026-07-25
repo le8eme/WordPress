@@ -202,7 +202,33 @@ class Healtheat_Media {
 	public static function admin_assets( $hook ) {
 		$screen = get_current_screen();
 
-		if ( ! $screen || 'healtheat_dish' !== $screen->post_type || ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
+		if ( ! $screen || 'healtheat_dish' !== $screen->post_type ) {
+			return;
+		}
+
+		// Écran d'affectation en masse : simple sélecteur médiathèque par plat.
+		if ( 'healtheat_dish_page_healtheat-photos' === $screen->id ) {
+			wp_enqueue_media();
+			wp_enqueue_script(
+				'healtheat-admin-photos',
+				HEALTHEAT_URL . 'assets/js/healtheat-admin-photos.js',
+				array(),
+				HEALTHEAT_VERSION,
+				true
+			);
+			wp_localize_script(
+				'healtheat-admin-photos',
+				'healtheatPhotos',
+				array(
+					'title'  => __( 'Choisir la photo du plat', 'healtheat' ),
+					'button' => __( 'Utiliser cette photo', 'healtheat' ),
+				)
+			);
+
+			return;
+		}
+
+		if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
 			return;
 		}
 
@@ -271,7 +297,11 @@ class Healtheat_Media {
 			<h1><?php esc_html_e( 'Photos des plats', 'healtheat' ); ?></h1>
 
 			<p>
-				<?php esc_html_e( 'Chaque plat s\'affiche avec sa photo dès qu\'une image mise en avant lui est associée. Vous pouvez soit la téléverser depuis la fiche du plat, soit coller ci-dessous l\'adresse d\'une photo à importer : elle sera téléchargée dans votre médiathèque, recadrée aux formats du site et définie comme image principale.', 'healtheat' ); ?>
+				<?php esc_html_e( 'Chaque plat s\'affiche avec sa photo dès qu\'une image mise en avant lui est associée. Deux façons de procéder ici : choisir une photo déjà présente dans la médiathèque, ou coller l\'adresse publique d\'une image à télécharger. Dans les deux cas, elle est recadrée aux formats du site et devient l\'image principale du plat.', 'healtheat' ); ?>
+			</p>
+
+			<p>
+				<?php esc_html_e( 'Photos achetées sur une banque payante (iStock, Getty, Adobe Stock…) : téléversez d\'abord les fichiers dans la médiathèque, puis affectez-les ci-dessous. L\'import par adresse ne fonctionne qu\'avec une image publiquement accessible — les liens de téléchargement d\'une banque payante sont liés à votre session et ne peuvent pas être utilisés ainsi. Les aperçus filigranés d\'une page de recherche ne sont, eux, pas utilisables : seule la version achetée l\'est.', 'healtheat' ); ?>
 			</p>
 
 			<p class="description">
@@ -303,8 +333,8 @@ class Healtheat_Media {
 					</thead>
 					<tbody>
 						<?php foreach ( $dishes as $dish ) : ?>
-							<tr>
-								<td>
+							<tr data-healtheat-row>
+								<td data-healtheat-preview>
 									<?php if ( has_post_thumbnail( $dish ) ) : ?>
 										<?php echo wp_get_attachment_image( get_post_thumbnail_id( $dish ), array( 90, 68 ) ); ?>
 									<?php else : ?>
@@ -315,11 +345,20 @@ class Healtheat_Media {
 									<strong><a href="<?php echo esc_url( (string) get_edit_post_link( $dish ) ); ?>"><?php echo esc_html( get_the_title( $dish ) ); ?></a></strong>
 									<br />
 									<a href="<?php echo esc_url( 'https://www.pexels.com/fr-fr/chercher/' . rawurlencode( get_the_title( $dish ) ) . '/' ); ?>" target="_blank" rel="noopener noreferrer">
-										<?php esc_html_e( 'Chercher une photo →', 'healtheat' ); ?>
+										<?php esc_html_e( 'Chercher une photo libre →', 'healtheat' ); ?>
 									</a>
 								</td>
 								<td>
-									<input type="url" class="large-text code" name="healtheat_photo[<?php echo esc_attr( $dish->ID ); ?>]" placeholder="https://…/photo.jpg" />
+									<p>
+										<button type="button" class="button" data-healtheat-pick>
+											<?php esc_html_e( 'Choisir dans la médiathèque', 'healtheat' ); ?>
+										</button>
+										<span data-healtheat-picked></span>
+										<input type="hidden" name="healtheat_photo_id[<?php echo esc_attr( $dish->ID ); ?>]" value="" data-healtheat-picked-id />
+									</p>
+									<p>
+										<input type="url" class="large-text code" name="healtheat_photo[<?php echo esc_attr( $dish->ID ); ?>]" placeholder="<?php esc_attr_e( '…ou coller l\'adresse publique d\'une image', 'healtheat' ); ?>" />
+									</p>
 								</td>
 							</tr>
 						<?php endforeach; ?>
@@ -349,8 +388,40 @@ class Healtheat_Media {
 		require_once ABSPATH . 'wp-admin/includes/image.php';
 
 		$submitted = isset( $_POST['healtheat_photo'] ) ? (array) wp_unslash( $_POST['healtheat_photo'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$picked    = isset( $_POST['healtheat_photo_id'] ) ? (array) wp_unslash( $_POST['healtheat_photo_id'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$done      = 0;
 		$errors    = array();
+
+		// Photos déjà présentes dans la médiathèque : simple affectation.
+		foreach ( $picked as $dish_id => $attachment_id ) {
+			$dish_id       = absint( $dish_id );
+			$attachment_id = absint( $attachment_id );
+
+			if ( ! $dish_id || ! $attachment_id ) {
+				continue;
+			}
+
+			if ( ! current_user_can( 'edit_post', $dish_id ) ) {
+				$errors[] = sprintf(
+					/* translators: %s: dish name. */
+					__( '%s : modification refusée.', 'healtheat' ),
+					get_the_title( $dish_id )
+				);
+				continue;
+			}
+
+			if ( ! wp_attachment_is_image( $attachment_id ) ) {
+				$errors[] = sprintf(
+					/* translators: %s: dish name. */
+					__( '%s : le fichier choisi n\'est pas une image.', 'healtheat' ),
+					get_the_title( $dish_id )
+				);
+				continue;
+			}
+
+			set_post_thumbnail( $dish_id, $attachment_id );
+			$done++;
+		}
 
 		foreach ( $submitted as $dish_id => $url ) {
 			$dish_id = absint( $dish_id );

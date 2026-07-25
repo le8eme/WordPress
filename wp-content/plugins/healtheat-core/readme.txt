@@ -30,7 +30,9 @@ Les plats s'affichent avec de vraies photos dès qu'une image mise en avant leur
 * **balises responsives** — chaque photo sort avec son `srcset`, ses attributs `sizes`, `loading` et `decoding` ;
 * **aperçu flouté** — une miniature de 24 px est encodée en base64 à l'import et peinte derrière la photo : elle s'affiche instantanément, la vraie image la recouvre une fois décodée. Aucun saut de mise en page, aucun script ;
 * **photos supplémentaires** — un encart « Photos supplémentaires » sur la fiche du plat permet d'ajouter des vues secondaires, affichées en vignettes cliquables ;
-* **import par adresse** — l'écran **Health'eat → Photos** liste tous les plats, indique ceux sans photo et permet de coller l'adresse d'une image : elle est téléchargée dans la médiathèque, vérifiée (type MIME réel, pas seulement l'extension), recadrée et définie comme image principale.
+* **affectation en masse** — l'écran **Health'eat → Photos** liste tous les plats, signale ceux sans photo et permet, pour chacun, soit de choisir une image de la médiathèque, soit de coller l'adresse publique d'une photo à télécharger (vérifiée sur son type MIME réel, pas seulement son extension).
+
+Photos achetées sur une banque payante (iStock, Getty, Adobe Stock…) : téléversez les fichiers dans la médiathèque, puis affectez-les depuis cet écran. Les liens de téléchargement de ces banques sont liés à votre session et ne peuvent pas servir à l'import par adresse ; les aperçus filigranés des pages de recherche ne sont pas utilisables.
 
 Quand un plat n'a pas encore de photo, le thème affiche une illustration de secours via le filtre `healtheat_dish_placeholder`.
 
