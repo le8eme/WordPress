@@ -26,6 +26,7 @@ require_once HEALTHEAT_DIR . 'includes/functions.php';
 require_once HEALTHEAT_DIR . 'includes/class-healtheat-post-types.php';
 require_once HEALTHEAT_DIR . 'includes/class-healtheat-media.php';
 require_once HEALTHEAT_DIR . 'includes/class-healtheat-provisional.php';
+require_once HEALTHEAT_DIR . 'includes/class-healtheat-stock.php';
 require_once HEALTHEAT_DIR . 'includes/class-healtheat-dish-meta.php';
 require_once HEALTHEAT_DIR . 'includes/class-healtheat-settings.php';
 require_once HEALTHEAT_DIR . 'includes/class-healtheat-slots.php';
@@ -43,6 +44,7 @@ function healtheat_bootstrap() {
 	Healtheat_Post_Types::init();
 	Healtheat_Media::init();
 	Healtheat_Provisional::init();
+	Healtheat_Stock::init();
 	Healtheat_Dish_Meta::init();
 	Healtheat_Settings::init();
 	Healtheat_Orders::init();

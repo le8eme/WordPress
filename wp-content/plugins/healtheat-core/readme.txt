@@ -32,6 +32,21 @@ Les plats s'affichent avec de vraies photos dès qu'une image mise en avant leur
 * **photos supplémentaires** — un encart « Photos supplémentaires » sur la fiche du plat permet d'ajouter des vues secondaires, affichées en vignettes cliquables ;
 * **affectation en masse** — l'écran **Health'eat → Photos** liste tous les plats, signale ceux sans photo et permet, pour chacun, soit de choisir une image de la médiathèque, soit de coller l'adresse publique d'une photo à télécharger (vérifiée sur son type MIME réel, pas seulement son extension).
 
+== Banque d'images ==
+
+L'écran **Health'eat → Photos** intègre une banque de vraies photos, utilisable sans quitter l'administration :
+
+1. collez une clé d'API Pexels (gratuite, immédiate, sur pexels.com/api) — ou définissez la constante `HEALTHEAT_PEXELS_KEY` dans `wp-config.php` ;
+2. tapez une recherche (« bowl quinoa », « salade césar », « jus détox ») ;
+3. la grille affiche les photos ; sous chacune, choisissez le plat auquel l'affecter ;
+4. « Importer les photos choisies » les télécharge, les recadre aux formats du site et les définit comme image principale.
+
+La licence Pexels autorise l'usage commercial, y compris sur le site d'un restaurant, sans achat ni mention obligatoire ; le nom du photographe est tout de même enregistré. Une case cochée par défaut marque ces photos comme provisoires, pour pouvoir les remplacer d'un bloc après un shooting.
+
+Côté sécurité, seules les adresses servies par `images.pexels.com` sont téléchargées : un formulaire trafiqué ne peut pas faire récupérer une adresse arbitraire par le serveur.
+
+Pour une banque payante (iStock, Getty, Adobe Stock), il n'y a pas d'API d'import possible sans votre abonnement : téléchargez les fichiers achetés, téléversez-les dans la médiathèque, puis affectez-les depuis le tableau plus bas.
+
 == Photos provisoires ==
 
 En attendant un vrai shooting, l'écran **Health'eat → Photos** propose deux façons de remplir la carte, qui ne touchent qu'aux plats sans photo :

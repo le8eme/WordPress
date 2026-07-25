@@ -319,6 +319,8 @@ class Healtheat_Media {
 				?>
 			</p>
 
+			<?php Healtheat_Stock::render_panel(); ?>
+
 			<?php self::render_provisional_panel(); ?>
 
 			<h2><?php esc_html_e( 'Photo par plat', 'healtheat' ); ?></h2>
