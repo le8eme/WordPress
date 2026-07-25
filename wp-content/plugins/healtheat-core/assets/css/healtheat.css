@@ -304,6 +304,11 @@
 /* Panier flottant
    -------------------------------------------------- */
 
+/* `display: flex` l'emporterait sur l'attribut `hidden` du navigateur. */
+.healtheat-cart[hidden] {
+	display: none;
+}
+
 .healtheat-cart {
 	position: fixed;
 	right: 24px;

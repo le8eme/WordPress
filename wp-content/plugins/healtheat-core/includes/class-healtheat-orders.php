@@ -477,7 +477,12 @@ class Healtheat_Orders {
 			'he_pickup' => __( 'Retrait', 'healtheat' ),
 			'he_items'  => __( 'Plats', 'healtheat' ),
 			'he_total'  => __( 'Total', 'healtheat' ),
-			'date'      => __( 'Reçue le', 'healtheat' ),
+			/*
+			 * Colonne maison plutôt que celle du cœur : sur un statut autre
+			 * que « publié », WordPress affiche « Last Modified », ce qui n'a
+			 * pas de sens pour une commande.
+			 */
+			'he_date'   => __( 'Reçue le', 'healtheat' ),
 		);
 	}
 
@@ -518,6 +523,10 @@ class Healtheat_Orders {
 				break;
 			case 'he_total':
 				echo '<strong>' . esc_html( healtheat_format_price( $order['total'] ) ) . '</strong>';
+				break;
+			case 'he_date':
+				echo esc_html( get_the_date( '', $order_id ) );
+				echo '<br /><small>' . esc_html( get_the_time( '', $order_id ) ) . '</small>';
 				break;
 		}
 	}

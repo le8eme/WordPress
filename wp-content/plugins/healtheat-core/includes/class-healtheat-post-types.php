@@ -159,6 +159,14 @@ class Healtheat_Post_Types {
 					'label'                     => $label,
 					'public'                    => false,
 					'internal'                  => false,
+					/*
+					 * Sans « protected », WP_Query écarte le statut de la liste
+					 * « Tous » de l'administration : les commandes existent en
+					 * base mais n'apparaissent nulle part.
+					 * Voir wp-includes/class-wp-query.php, get_post_stati(
+					 * array( 'protected' => true, 'show_in_admin_all_list' => true ) ).
+					 */
+					'protected'                 => true,
 					'exclude_from_search'       => true,
 					'show_in_admin_all_list'    => true,
 					'show_in_admin_status_list' => true,

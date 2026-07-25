@@ -269,7 +269,8 @@ if ( count( $healtheat_shots ) >= 3 ) :
 
 			<div class="mosaic" data-reveal>
 				<?php foreach ( $healtheat_shots as $healtheat_index => $healtheat_shot ) : ?>
-					<a class="mosaic__item mosaic__item--<?php echo esc_attr( $healtheat_index % 5 ); ?>" href="<?php echo esc_url( $healtheat_shot['permalink'] ); ?>">
+					<?php // Seule la première vignette est agrandie : les cinq suivantes complètent la grille sans laisser de vide. ?>
+					<a class="mosaic__item<?php echo 0 === $healtheat_index ? ' mosaic__item--0' : ''; ?>" href="<?php echo esc_url( $healtheat_shot['permalink'] ); ?>">
 						<?php
 						echo healtheat_dish_photo( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							$healtheat_shot['id'],

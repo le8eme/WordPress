@@ -853,9 +853,14 @@ img {
 /* Mosaïque de photos
    -------------------------------------------------- */
 
+/*
+ * Grille à hauteur de rangée fixe : les vignettes s'emboîtent sans laisser
+ * de trou, quel que soit le format des photos fournies.
+ */
 .mosaic {
 	display: grid;
 	grid-template-columns: repeat(6, 1fr);
+	grid-auto-rows: 210px;
 	gap: 18px;
 }
 
@@ -863,23 +868,16 @@ img {
 	position: relative;
 	display: block;
 	grid-column: span 2;
-	aspect-ratio: 4 / 3;
 	overflow: hidden;
 	border: 1px solid var(--he-line-soft);
 	border-radius: var(--he-radius);
 	text-decoration: none;
 }
 
-/* Deux grandes vignettes rythment la grille. */
-.mosaic__item--0,
-.mosaic__item--3 {
+/* La première vignette occupe quatre colonnes sur deux rangées. */
+.mosaic__item--0 {
 	grid-column: span 4;
-	aspect-ratio: 16 / 9;
-}
-
-.mosaic__item--4,
-.mosaic__item--5 {
-	grid-column: span 3;
+	grid-row: span 2;
 }
 
 .mosaic__item::after {
@@ -1244,15 +1242,13 @@ body .healtheat-notice {
 
 	.mosaic {
 		grid-template-columns: repeat(2, 1fr);
+		grid-auto-rows: 170px;
 	}
 
 	.mosaic__item,
-	.mosaic__item--0,
-	.mosaic__item--3,
-	.mosaic__item--4,
-	.mosaic__item--5 {
+	.mosaic__item--0 {
 		grid-column: span 1;
-		aspect-ratio: 4 / 3;
+		grid-row: span 1;
 	}
 }
 
