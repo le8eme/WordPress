@@ -71,6 +71,29 @@
 	height: 100%;
 	object-fit: cover;
 	display: block;
+	transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.healtheat-dish:hover .healtheat-dish__media img {
+	transform: scale(1.07);
+}
+
+/*
+ * Aperçu flouté : la miniature de 24 px enregistrée à l'import sert de
+ * fond à l'image. Elle s'affiche instantanément, la photo la recouvre une
+ * fois décodée — sans saut de mise en page ni script.
+ */
+.healtheat-photo {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.healtheat-photo--blurup {
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
 }
 
 .healtheat-dish__placeholder {

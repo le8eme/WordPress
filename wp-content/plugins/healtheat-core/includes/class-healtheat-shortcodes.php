@@ -170,8 +170,8 @@ class Healtheat_Shortcodes {
 			data-diets="<?php echo esc_attr( implode( ' ', array_filter( $diet_slugs ) ) ); ?>">
 
 			<a class="healtheat-dish__media" href="<?php echo esc_url( $data['permalink'] ); ?>">
-				<?php if ( $data['image'] ) : ?>
-					<img src="<?php echo esc_url( $data['image'] ); ?>" alt="<?php echo esc_attr( $data['name'] ); ?>" loading="lazy" />
+				<?php if ( $data['image_id'] ) : ?>
+					<?php echo healtheat_dish_photo( $data['id'], 'healtheat-card' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<?php else : ?>
 					<span class="healtheat-dish__placeholder" aria-hidden="true">
 						<?php

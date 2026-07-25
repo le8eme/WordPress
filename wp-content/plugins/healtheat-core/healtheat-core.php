@@ -24,6 +24,7 @@ define( 'HEALTHEAT_URL', plugin_dir_url( __FILE__ ) );
 
 require_once HEALTHEAT_DIR . 'includes/functions.php';
 require_once HEALTHEAT_DIR . 'includes/class-healtheat-post-types.php';
+require_once HEALTHEAT_DIR . 'includes/class-healtheat-media.php';
 require_once HEALTHEAT_DIR . 'includes/class-healtheat-dish-meta.php';
 require_once HEALTHEAT_DIR . 'includes/class-healtheat-settings.php';
 require_once HEALTHEAT_DIR . 'includes/class-healtheat-slots.php';
@@ -39,6 +40,7 @@ require_once HEALTHEAT_DIR . 'includes/class-healtheat-install.php';
  */
 function healtheat_bootstrap() {
 	Healtheat_Post_Types::init();
+	Healtheat_Media::init();
 	Healtheat_Dish_Meta::init();
 	Healtheat_Settings::init();
 	Healtheat_Orders::init();

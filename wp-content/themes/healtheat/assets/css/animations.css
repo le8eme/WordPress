@@ -445,6 +445,113 @@
 	animation-delay: calc(var(--i) * 90ms);
 }
 
+/* Photos réelles
+   -------------------------------------------------- */
+
+@keyframes he-kenburns {
+	from { transform: scale(1.05) translate3d(0, 0, 0); }
+	to   { transform: scale(1.16) translate3d(-1.6%, -1.4%, 0); }
+}
+
+.hero__photo {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	overflow: hidden;
+}
+
+.hero__photo-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	/* Léger travelling avant, comme un plan de cuisine filmé. */
+	animation: he-kenburns 28s ease-in-out infinite alternate;
+	filter: saturate(1.06) contrast(1.04) brightness(0.82);
+}
+
+.hero__scrim {
+	position: absolute;
+	inset: 0;
+	background:
+		linear-gradient(180deg, rgba(4, 7, 12, 0.72), rgba(4, 7, 12, 0.93) 62%),
+		radial-gradient(circle at 72% 38%, rgba(52, 229, 255, 0.2), transparent 62%);
+}
+
+/* Vignettes rondes : orbite, aliments flottants, bandeau. */
+.photo-round {
+	display: block;
+	width: 100%;
+	aspect-ratio: 1;
+	object-fit: cover;
+	border-radius: 50%;
+	border: 1px solid rgba(124, 255, 158, 0.35);
+	box-shadow: 0 14px 34px rgba(3, 8, 12, 0.6), 0 0 26px rgba(52, 229, 255, 0.22);
+}
+
+.food-field--photos .food-field__item {
+	opacity: 0.95;
+}
+
+/* Une photo ne tourne pas sur elle-même : elle dérive seulement. */
+.food-field__item .photo-round,
+.orbit__item .photo-round,
+.orbit__core-food .photo-round {
+	animation: none;
+}
+
+.orbit--photos .orbit__item {
+	width: 88px;
+	margin: -44px 0 0 -44px;
+}
+
+.orbit__core-food .photo-round {
+	box-shadow: 0 0 46px rgba(124, 255, 158, 0.45);
+	border-color: rgba(124, 255, 158, 0.6);
+}
+
+.marquee__thumb {
+	display: block;
+	width: 34px;
+	flex-shrink: 0;
+}
+
+.marquee__thumb .food {
+	width: 30px;
+}
+
+/* Mosaïque : la photo respire au survol, la légende remonte. */
+.mosaic__photo {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.4s ease;
+	filter: saturate(1.05) contrast(1.03);
+}
+
+.mosaic__item:hover .mosaic__photo {
+	transform: scale(1.07);
+	filter: saturate(1.15) contrast(1.06);
+}
+
+.mosaic__label {
+	transform: translateY(6px);
+	opacity: 0.85;
+	transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.mosaic__item:hover .mosaic__label {
+	transform: none;
+	opacity: 1;
+}
+
+.dish-single__photo {
+	transition: opacity 0.25s ease;
+}
+
+.dish-single__photo.is-swapping {
+	opacity: 0.45;
+}
+
 /* Accessibilité : on coupe tout
    -------------------------------------------------- */
 

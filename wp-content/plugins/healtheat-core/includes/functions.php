@@ -150,13 +150,115 @@ function healtheat_get_dish_data( $dish ) {
 		'excerpt'     => wp_strip_all_tags( get_the_excerpt( $dish ) ),
 		'price'       => $price,
 		'price_html'  => healtheat_format_price( $price ),
-		'image'       => get_the_post_thumbnail_url( $dish, 'healtheat-dish' ),
+		'image'       => get_the_post_thumbnail_url( $dish, 'healtheat-card' ),
+		'image_id'    => (int) get_post_thumbnail_id( $dish ),
+		'photos'      => healtheat_get_dish_photos( $dish->ID ),
 		'available'   => healtheat_dish_is_available( $dish->ID ),
 		'nutrition'   => healtheat_get_nutrition( $dish->ID ),
 		'diets'       => healtheat_get_term_names( $dish->ID, 'healtheat_diet' ),
 		'allergens'   => healtheat_get_term_names( $dish->ID, 'healtheat_allergen' ),
 		'categories'  => healtheat_get_term_names( $dish->ID, 'healtheat_dish_cat' ),
 	);
+}
+
+/**
+ * Renders the photo of a dish, ready for responsive display.
+ *
+ * The tiny blurred preview stored at upload time is painted behind the
+ * image, so the layout never jumps and the photo fades in once decoded.
+ *
+ * @param int    $dish_id Dish ID.
+ * @param string $size    Registered image size.
+ * @param array  $attrs   Extra image attributes.
+ * @return string Empty string when the dish has no photo.
+ */
+function healtheat_dish_photo( $dish_id, $size = 'healtheat-card', $attrs = array() ) {
+	$photo_id = get_post_thumbnail_id( $dish_id );
+
+	if ( ! $photo_id ) {
+		return '';
+	}
+
+	$attrs = wp_parse_args(
+		$attrs,
+		array(
+			'class'    => 'healtheat-photo',
+			'loading'  => 'lazy',
+			'decoding' => 'async',
+			'sizes'    => '(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 33vw',
+		)
+	);
+
+	$preview = Healtheat_Media::get_placeholder( $photo_id );
+
+	if ( $preview ) {
+		$attrs['class'] .= ' healtheat-photo--blurup';
+		$attrs['style']  = 'background-image:url(' . $preview . ');';
+	}
+
+	return (string) wp_get_attachment_image( $photo_id, $size, false, $attrs );
+}
+
+/**
+ * Returns the photo IDs of a dish: featured image first, then its gallery.
+ *
+ * @param int $dish_id Dish ID.
+ * @return int[]
+ */
+function healtheat_get_dish_photos( $dish_id ) {
+	$photos = array();
+	$thumb  = (int) get_post_thumbnail_id( $dish_id );
+
+	if ( $thumb ) {
+		$photos[] = $thumb;
+	}
+
+	foreach ( Healtheat_Media::get_gallery( $dish_id ) as $photo_id ) {
+		if ( ! in_array( $photo_id, $photos, true ) ) {
+			$photos[] = $photo_id;
+		}
+	}
+
+	return $photos;
+}
+
+/**
+ * Returns the photos of the published dishes, newest first.
+ *
+ * Used by the theme to build the photographic hero and marquee.
+ *
+ * @param int $limit Maximum number of dishes.
+ * @return array<int,array<string,mixed>> Dish ID, title, permalink and photo ID.
+ */
+function healtheat_get_photo_dishes( $limit = 8 ) {
+	$dishes = get_posts(
+		array(
+			'post_type'      => 'healtheat_dish',
+			'post_status'    => 'publish',
+			'posts_per_page' => (int) $limit,
+			'orderby'        => 'menu_order title',
+			'order'          => 'ASC',
+			'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				array(
+					'key'     => '_thumbnail_id',
+					'compare' => 'EXISTS',
+				),
+			),
+		)
+	);
+
+	$results = array();
+
+	foreach ( $dishes as $dish ) {
+		$results[] = array(
+			'id'        => (int) $dish->ID,
+			'title'     => get_the_title( $dish ),
+			'permalink' => get_permalink( $dish ),
+			'photo_id'  => (int) get_post_thumbnail_id( $dish ),
+		);
+	}
+
+	return $results;
 }
 
 /**

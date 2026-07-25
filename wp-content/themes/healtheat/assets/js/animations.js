@@ -211,6 +211,46 @@
 	}
 
 	/**
+	 * Fait basculer la grande photo d'un plat au clic sur une vignette.
+	 */
+	function initDishGallery() {
+		document.querySelectorAll( '[data-healtheat-dish-gallery]' ).forEach( function ( gallery ) {
+			var main = gallery.querySelector( '.dish-single__photo' );
+			var buttons = gallery.querySelectorAll( '.dish-thumbs__button' );
+
+			if ( ! main || ! buttons.length ) {
+				return;
+			}
+
+			buttons.forEach( function ( button ) {
+				button.addEventListener( 'click', function () {
+					var full = button.getAttribute( 'data-full' );
+
+					if ( ! full ) {
+						return;
+					}
+
+					// La photo actuelle reste affichée jusqu'au décodage de la suivante.
+					var next = new window.Image();
+
+					next.onload = function () {
+						main.src = full;
+						main.srcset = button.getAttribute( 'data-srcset' ) || '';
+						main.classList.remove( 'is-swapping' );
+					};
+
+					main.classList.add( 'is-swapping' );
+					next.src = full;
+
+					buttons.forEach( function ( other ) {
+						other.classList.toggle( 'is-active', other === button );
+					} );
+				} );
+			} );
+		} );
+	}
+
+	/**
 	 * Duplique le bandeau défilant pour une boucle sans couture.
 	 */
 	function initMarquee() {
@@ -225,5 +265,6 @@
 		initCounters();
 		initParallax();
 		initTilt();
+		initDishGallery();
 	} );
 } )();

@@ -850,6 +850,105 @@ img {
 	padding: 88px 0 0;
 }
 
+/* Mosaïque de photos
+   -------------------------------------------------- */
+
+.mosaic {
+	display: grid;
+	grid-template-columns: repeat(6, 1fr);
+	gap: 18px;
+}
+
+.mosaic__item {
+	position: relative;
+	display: block;
+	grid-column: span 2;
+	aspect-ratio: 4 / 3;
+	overflow: hidden;
+	border: 1px solid var(--he-line-soft);
+	border-radius: var(--he-radius);
+	text-decoration: none;
+}
+
+/* Deux grandes vignettes rythment la grille. */
+.mosaic__item--0,
+.mosaic__item--3 {
+	grid-column: span 4;
+	aspect-ratio: 16 / 9;
+}
+
+.mosaic__item--4,
+.mosaic__item--5 {
+	grid-column: span 3;
+}
+
+.mosaic__item::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(180deg, transparent 45%, rgba(4, 7, 12, 0.86));
+	pointer-events: none;
+}
+
+.mosaic__item:hover {
+	border-color: var(--he-line);
+}
+
+.mosaic__label {
+	position: absolute;
+	left: 20px;
+	right: 20px;
+	bottom: 16px;
+	z-index: 1;
+	font-family: var(--he-mono);
+	font-size: 0.78rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--he-text);
+}
+
+/* Galerie de la fiche plat
+   -------------------------------------------------- */
+
+.dish-single__gallery {
+	position: sticky;
+	top: 104px;
+}
+
+.dish-thumbs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin: 16px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.dish-thumbs__button {
+	width: 68px;
+	height: 68px;
+	padding: 0;
+	border: 1px solid var(--he-line-soft);
+	border-radius: 50%;
+	background: none;
+	overflow: hidden;
+	cursor: pointer;
+	transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dish-thumbs__button img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.dish-thumbs__button:hover,
+.dish-thumbs__button.is-active {
+	border-color: var(--he-neon);
+	box-shadow: 0 0 18px rgba(124, 255, 158, 0.4);
+}
+
 /* Habillage des composants de l'extension
    Les sélecteurs sont préfixés par `body` afin de passer devant la feuille
    du plugin quel que soit l'ordre de chargement.
@@ -870,6 +969,11 @@ body .healtheat-dish__media {
 	display: grid;
 	place-items: center;
 	background: radial-gradient(circle at 50% 40%, rgba(52, 229, 255, 0.12), transparent 68%);
+}
+
+body .healtheat-dish__media img {
+	/* Les photos gagnent un rien de densité pour tenir face au fond sombre. */
+	filter: saturate(1.06) contrast(1.03);
 }
 
 body .healtheat-dish__title a {
@@ -1118,6 +1222,23 @@ body .healtheat-notice {
 	.dish-single__layout {
 		grid-template-columns: 1fr;
 		gap: 34px;
+	}
+
+	.dish-single__gallery {
+		position: static;
+	}
+
+	.mosaic {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.mosaic__item,
+	.mosaic__item--0,
+	.mosaic__item--3,
+	.mosaic__item--4,
+	.mosaic__item--5 {
+		grid-column: span 1;
+		aspect-ratio: 4 / 3;
 	}
 }
 

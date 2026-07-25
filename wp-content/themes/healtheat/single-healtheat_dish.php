@@ -20,16 +20,54 @@ while ( have_posts() ) :
 	<article id="post-<?php the_ID(); ?>" <?php post_class( 'dish-single' ); ?>>
 		<div class="wrap">
 			<div class="dish-single__layout">
-				<div class="dish-single__media" data-reveal>
-					<?php if ( has_post_thumbnail() ) : ?>
-						<?php the_post_thumbnail( 'healtheat-dish' ); ?>
-					<?php else : ?>
-						<div class="dish-single__placeholder" aria-hidden="true">
+				<?php $healtheat_photos = healtheat_get_dish_photos( get_the_ID() ); ?>
+
+				<div class="dish-single__gallery" data-reveal data-healtheat-dish-gallery>
+					<div class="dish-single__media">
+						<?php if ( $healtheat_photos ) : ?>
 							<?php
-							$healtheat_keys = healtheat_food_keys();
-							echo healtheat_food_svg( $healtheat_keys[ get_the_ID() % count( $healtheat_keys ) ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo healtheat_dish_photo( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								get_the_ID(),
+								'healtheat-large',
+								array(
+									'class'   => 'healtheat-photo dish-single__photo',
+									'sizes'   => '(max-width: 880px) 100vw, 46vw',
+									'loading' => 'eager',
+								)
+							);
 							?>
-						</div>
+						<?php else : ?>
+							<div class="dish-single__placeholder" aria-hidden="true">
+								<?php
+								$healtheat_keys = healtheat_food_keys();
+								echo healtheat_food_svg( $healtheat_keys[ get_the_ID() % count( $healtheat_keys ) ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								?>
+							</div>
+						<?php endif; ?>
+					</div>
+
+					<?php if ( count( $healtheat_photos ) > 1 ) : ?>
+						<ul class="dish-thumbs">
+							<?php foreach ( $healtheat_photos as $healtheat_position => $healtheat_photo_id ) : ?>
+								<li>
+									<button type="button"
+										class="dish-thumbs__button<?php echo 0 === $healtheat_position ? ' is-active' : ''; ?>"
+										data-full="<?php echo esc_url( (string) wp_get_attachment_image_url( $healtheat_photo_id, 'healtheat-large' ) ); ?>"
+										data-srcset="<?php echo esc_attr( (string) wp_get_attachment_image_srcset( $healtheat_photo_id, 'healtheat-large' ) ); ?>">
+										<?php echo wp_get_attachment_image( $healtheat_photo_id, 'healtheat-round', false, array( 'alt' => '' ) ); ?>
+										<span class="screen-reader-text">
+											<?php
+											printf(
+												/* translators: %d: photo number. */
+												esc_html__( 'Voir la photo %d', 'healtheat-theme' ),
+												(int) $healtheat_position + 1
+											);
+											?>
+										</span>
+									</button>
+								</li>
+							<?php endforeach; ?>
+						</ul>
 					<?php endif; ?>
 				</div>
 

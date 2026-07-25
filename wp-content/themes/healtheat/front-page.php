@@ -23,7 +23,25 @@ $healtheat_menu_url = healtheat_plugin_active() ? get_post_type_archive_link( 'h
 $healtheat_title = healtheat_option( 'healtheat_hero_title', __( 'Manger *sainement*, sans y passer sa pause déjeuner.', 'healtheat-theme' ) );
 ?>
 
-<section class="hero"<?php echo $healtheat_hero_url ? ' style="background-image:linear-gradient(rgba(4,7,12,.86),rgba(4,7,12,.94)),url(\'' . esc_url( $healtheat_hero_url ) . '\');background-size:cover;background-position:center"' : ''; ?>>
+<section class="hero<?php echo $healtheat_hero_id ? ' hero--photo' : ''; ?>">
+	<?php if ( $healtheat_hero_id ) : ?>
+		<div class="hero__photo" aria-hidden="true">
+			<?php
+			echo wp_get_attachment_image(
+				$healtheat_hero_id,
+				'healtheat-wide',
+				false,
+				array(
+					'class'    => 'hero__photo-img',
+					'sizes'    => '100vw',
+					'decoding' => 'async',
+				)
+			);
+			?>
+			<span class="hero__scrim"></span>
+		</div>
+	<?php endif; ?>
+
 	<?php healtheat_food_field(); ?>
 
 	<div class="hero__inner">
@@ -69,21 +87,25 @@ $healtheat_title = healtheat_option( 'healtheat_hero_title', __( 'Manger *sainem
 		</div>
 
 		<div class="hero__visual">
-			<div class="orbit" data-parallax="0.15">
+			<?php
+			/* Le premier visuel occupe le centre, les six suivants gravitent autour. */
+			$healtheat_visuals    = healtheat_visual_items( 7, 'healtheat-round' );
+			$healtheat_core       = array_shift( $healtheat_visuals );
+			$healtheat_satellites = $healtheat_visuals;
+			?>
+			<div class="orbit<?php echo healtheat_has_photos() ? ' orbit--photos' : ''; ?>" data-parallax="0.15">
 				<div class="orbit__ring"></div>
 				<div class="orbit__ring orbit__ring--inner"></div>
 				<div class="orbit__core"></div>
-				<div class="orbit__core-food"><?php echo healtheat_food_svg( 'avocado' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+				<div class="orbit__core-food"><?php echo $healtheat_core; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 
 				<div class="orbit__satellites">
 					<?php
-					$healtheat_satellites = array( 'leaf', 'tomato', 'citrus', 'broccoli', 'berry', 'grain' );
-
-					foreach ( $healtheat_satellites as $healtheat_index => $healtheat_food ) :
+					foreach ( $healtheat_satellites as $healtheat_index => $healtheat_visual ) :
 						$healtheat_angle = $healtheat_index * ( 360 / count( $healtheat_satellites ) );
 						?>
 						<div class="orbit__item" style="--angle:<?php echo esc_attr( $healtheat_angle ); ?>deg;--radius:calc(min(430px, 82vw) / 2 - 34px)">
-							<?php echo healtheat_food_svg( $healtheat_food ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+							<?php echo $healtheat_visual; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</div>
 					<?php endforeach; ?>
 				</div>
@@ -96,20 +118,22 @@ $healtheat_title = healtheat_option( 'healtheat_hero_title', __( 'Manger *sainem
 	<div class="marquee__track" data-marquee>
 		<?php
 		$healtheat_words = array(
-			'leaf'     => __( 'Vegan', 'healtheat-theme' ),
-			'grain'    => __( 'Sans gluten', 'healtheat-theme' ),
-			'tomato'   => __( 'Maraîchers locaux', 'healtheat-theme' ),
-			'citrus'   => __( 'Pressé à froid', 'healtheat-theme' ),
-			'broccoli' => __( 'Zéro conservateur', 'healtheat-theme' ),
-			'berry'    => __( 'Sucre non raffiné', 'healtheat-theme' ),
-			'carrot'   => __( 'De saison', 'healtheat-theme' ),
-			'droplet'  => __( 'Emballage recyclable', 'healtheat-theme' ),
+			__( 'Vegan', 'healtheat-theme' ),
+			__( 'Sans gluten', 'healtheat-theme' ),
+			__( 'Maraîchers locaux', 'healtheat-theme' ),
+			__( 'Pressé à froid', 'healtheat-theme' ),
+			__( 'Zéro conservateur', 'healtheat-theme' ),
+			__( 'Sucre non raffiné', 'healtheat-theme' ),
+			__( 'De saison', 'healtheat-theme' ),
+			__( 'Emballage recyclable', 'healtheat-theme' ),
 		);
 
-		foreach ( $healtheat_words as $healtheat_food => $healtheat_word ) :
+		$healtheat_chips = healtheat_visual_items( count( $healtheat_words ) );
+
+		foreach ( $healtheat_words as $healtheat_index => $healtheat_word ) :
 			?>
 			<span class="marquee__item">
-				<?php echo healtheat_food_svg( $healtheat_food ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<span class="marquee__thumb"><?php echo $healtheat_chips[ $healtheat_index ]; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 				<span><?php echo esc_html( $healtheat_word ); ?></span>
 			</span>
 		<?php endforeach; ?>
@@ -182,20 +206,22 @@ $healtheat_title = healtheat_option( 'healtheat_hero_title', __( 'Manger *sainem
 			<div class="assembly__glow"></div>
 
 			<?php
-			$healtheat_drops = array(
-				array( 'leaf', '8%', '4%', 78, '0s', 7 ),
-				array( 'tomato', '62%', '0%', 62, '0.12s', 8 ),
-				array( 'broccoli', '30%', '18%', 88, '0.24s', 6.5 ),
-				array( 'citrus', '74%', '26%', 58, '0.36s', 9 ),
-				array( 'grain', '16%', '38%', 52, '0.48s', 7.5 ),
-				array( 'berry', '52%', '40%', 44, '0.6s', 8.5 ),
+			// Position X, position Y, taille, décalage d'entrée, durée du flottement.
+			$healtheat_drops   = array(
+				array( '6%', '2%', 104, '0s', 7 ),
+				array( '60%', '0%', 88, '0.12s', 8 ),
+				array( '28%', '20%', 116, '0.24s', 6.5 ),
+				array( '72%', '28%', 80, '0.36s', 9 ),
+				array( '14%', '42%', 72, '0.48s', 7.5 ),
+				array( '50%', '44%', 64, '0.6s', 8.5 ),
 			);
+			$healtheat_visuals = healtheat_visual_items( count( $healtheat_drops ) );
 
-			foreach ( $healtheat_drops as $healtheat_drop ) :
+			foreach ( $healtheat_drops as $healtheat_index => $healtheat_drop ) :
 				?>
 				<div class="assembly__item"
-					style="--x:<?php echo esc_attr( $healtheat_drop[1] ); ?>;--y:<?php echo esc_attr( $healtheat_drop[2] ); ?>;--size:<?php echo esc_attr( $healtheat_drop[3] ); ?>px;--delay:<?php echo esc_attr( $healtheat_drop[4] ); ?>;--duration:<?php echo esc_attr( $healtheat_drop[5] ); ?>s">
-					<?php echo healtheat_food_svg( $healtheat_drop[0] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					style="--x:<?php echo esc_attr( $healtheat_drop[0] ); ?>;--y:<?php echo esc_attr( $healtheat_drop[1] ); ?>;--size:<?php echo esc_attr( $healtheat_drop[2] ); ?>px;--delay:<?php echo esc_attr( $healtheat_drop[3] ); ?>;--duration:<?php echo esc_attr( $healtheat_drop[4] ); ?>s">
+					<?php echo $healtheat_visuals[ $healtheat_index ]; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</div>
 			<?php endforeach; ?>
 
@@ -224,6 +250,40 @@ $healtheat_title = healtheat_option( 'healtheat_hero_title', __( 'Manger *sainem
 					</a>
 				</p>
 			<?php endif; ?>
+		</div>
+	</section>
+<?php endif; ?>
+
+<?php
+$healtheat_shots = healtheat_plugin_active() ? healtheat_get_photo_dishes( 6 ) : array();
+
+if ( count( $healtheat_shots ) >= 3 ) :
+	?>
+	<section class="section section--gallery">
+		<div class="wrap">
+			<header class="section__header" data-reveal>
+				<p class="eyebrow"><?php esc_html_e( 'En cuisine', 'healtheat-theme' ); ?></p>
+				<h2 class="section__title"><?php esc_html_e( 'Ce que vous mangez, en vrai', 'healtheat-theme' ); ?></h2>
+				<p class="section__lead"><?php esc_html_e( 'Aucune image de banque générique : chaque photo est celle du plat que nous servons.', 'healtheat-theme' ); ?></p>
+			</header>
+
+			<div class="mosaic" data-reveal>
+				<?php foreach ( $healtheat_shots as $healtheat_index => $healtheat_shot ) : ?>
+					<a class="mosaic__item mosaic__item--<?php echo esc_attr( $healtheat_index % 5 ); ?>" href="<?php echo esc_url( $healtheat_shot['permalink'] ); ?>">
+						<?php
+						echo healtheat_dish_photo( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							$healtheat_shot['id'],
+							'healtheat-card',
+							array(
+								'class' => 'healtheat-photo mosaic__photo',
+								'sizes' => '(max-width: 782px) 100vw, 33vw',
+							)
+						);
+						?>
+						<span class="mosaic__label"><?php echo esc_html( $healtheat_shot['title'] ); ?></span>
+					</a>
+				<?php endforeach; ?>
+			</div>
 		</div>
 	</section>
 <?php endif; ?>

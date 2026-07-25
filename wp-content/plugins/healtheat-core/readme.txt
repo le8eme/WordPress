@@ -22,6 +22,18 @@ Health'eat Core apporte à WordPress tout ce dont un restaurant healthy a besoin
 
 Les prix sont stockés en centimes et **recalculés côté serveur** à chaque commande : le navigateur n'envoie que des identifiants de plats et des quantités.
 
+== Photos ==
+
+Les plats s'affichent avec de vraies photos dès qu'une image mise en avant leur est associée :
+
+* **quatre formats** recadrés automatiquement — carte (900×675), fiche plat (1400 px de large), vignette ronde (400×400) et bandeau (2000×1100) ;
+* **balises responsives** — chaque photo sort avec son `srcset`, ses attributs `sizes`, `loading` et `decoding` ;
+* **aperçu flouté** — une miniature de 24 px est encodée en base64 à l'import et peinte derrière la photo : elle s'affiche instantanément, la vraie image la recouvre une fois décodée. Aucun saut de mise en page, aucun script ;
+* **photos supplémentaires** — un encart « Photos supplémentaires » sur la fiche du plat permet d'ajouter des vues secondaires, affichées en vignettes cliquables ;
+* **import par adresse** — l'écran **Health'eat → Photos** liste tous les plats, indique ceux sans photo et permet de coller l'adresse d'une image : elle est téléchargée dans la médiathèque, vérifiée (type MIME réel, pas seulement l'extension), recadrée et définie comme image principale.
+
+Quand un plat n'a pas encore de photo, le thème affiche une illustration de secours via le filtre `healtheat_dish_placeholder`.
+
 == Réglages ==
 
 Menu **Health'eat → Réglages** :

@@ -355,6 +355,59 @@ function healtheat_animated_title( $text ) {
 }
 
 /**
+ * Returns visuals for the decorative areas: real dish photos first,
+ * illustrations only to fill the gaps.
+ *
+ * @param int    $count Number of visuals wanted.
+ * @param string $size  Image size used for the photos.
+ * @return string[] Ready to print markup.
+ */
+function healtheat_visual_items( $count, $size = 'healtheat-round' ) {
+	$items  = array();
+	$dishes = healtheat_plugin_active() ? healtheat_get_photo_dishes( $count ) : array();
+
+	foreach ( $dishes as $dish ) {
+		$photo = healtheat_dish_photo(
+			$dish['id'],
+			$size,
+			array(
+				'class' => 'healtheat-photo photo-round',
+				'sizes' => '160px',
+			)
+		);
+
+		if ( $photo ) {
+			$items[] = $photo;
+		}
+	}
+
+	$keys  = healtheat_food_keys();
+	$index = 0;
+
+	while ( count( $items ) < $count ) {
+		$items[] = healtheat_food_svg( $keys[ $index % count( $keys ) ] );
+		$index++;
+	}
+
+	return array_slice( $items, 0, $count );
+}
+
+/**
+ * Tells whether at least one dish carries a real photo.
+ *
+ * @return bool
+ */
+function healtheat_has_photos() {
+	static $has = null;
+
+	if ( null === $has ) {
+		$has = healtheat_plugin_active() && ! empty( healtheat_get_photo_dishes( 1 ) );
+	}
+
+	return $has;
+}
+
+/**
  * Prints the animated background layers.
  *
  * @return void
@@ -376,22 +429,24 @@ function healtheat_backdrop() {
  * @return void
  */
 function healtheat_food_field() {
-	$items = array(
-		array( 'leaf', '8%', '14%', 74, 0.9, '0s', 12 ),
-		array( 'tomato', '82%', '10%', 62, 0.55, '-2.5s', 15 ),
-		array( 'citrus', '68%', '72%', 88, 0.75, '-5s', 18 ),
-		array( 'berry', '14%', '78%', 54, 0.4, '-1.5s', 13 ),
-		array( 'grain', '46%', '6%', 48, 0.35, '-3.5s', 16 ),
-		array( 'carrot', '90%', '46%', 58, 0.6, '-6s', 14 ),
+	// Position X, position Y, taille, profondeur de parallaxe, décalage, durée.
+	$slots   = array(
+		array( '6%', '16%', 112, 0.9, '0s', 12 ),
+		array( '80%', '8%', 96, 0.55, '-2.5s', 15 ),
+		array( '66%', '74%', 128, 0.75, '-5s', 18 ),
+		array( '12%', '76%', 84, 0.4, '-1.5s', 13 ),
+		array( '44%', '4%', 72, 0.35, '-3.5s', 16 ),
+		array( '90%', '48%', 88, 0.6, '-6s', 14 ),
 	);
+	$visuals = healtheat_visual_items( count( $slots ) );
 	?>
-	<div class="food-field" aria-hidden="true">
-		<?php foreach ( $items as $index => $item ) : ?>
+	<div class="food-field<?php echo healtheat_has_photos() ? ' food-field--photos' : ''; ?>" aria-hidden="true">
+		<?php foreach ( $slots as $index => $slot ) : ?>
 			<div class="food-field__item<?php echo 0 === $index % 2 ? '' : ' food-field__item--reverse'; ?>"
-				data-parallax="<?php echo esc_attr( $item[4] ); ?>"
-				style="left:<?php echo esc_attr( $item[1] ); ?>;top:<?php echo esc_attr( $item[2] ); ?>;--size:<?php echo esc_attr( $item[3] ); ?>px;--delay:<?php echo esc_attr( $item[5] ); ?>;--duration:<?php echo esc_attr( $item[6] ); ?>s;--rotation:<?php echo esc_attr( $item[6] * 3 ); ?>s">
+				data-parallax="<?php echo esc_attr( $slot[3] ); ?>"
+				style="left:<?php echo esc_attr( $slot[0] ); ?>;top:<?php echo esc_attr( $slot[1] ); ?>;--size:<?php echo esc_attr( $slot[2] ); ?>px;--delay:<?php echo esc_attr( $slot[4] ); ?>;--duration:<?php echo esc_attr( $slot[5] ); ?>s;--rotation:<?php echo esc_attr( $slot[5] * 3 ); ?>s">
 				<span class="food-field__float">
-					<?php echo healtheat_food_svg( $item[0] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php echo $visuals[ $index ]; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
 			</div>
 		<?php endforeach; ?>

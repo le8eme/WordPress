@@ -20,6 +20,18 @@ Health'eat est un thème classique (PHP) à l'interface sombre néon, animée pa
 
 Le thème fonctionne seul, mais la carte et la commande nécessitent l'extension **Health'eat Core**.
 
+== Photos ==
+
+Le thème est pensé photo d'abord : dès qu'un plat a une image mise en avant, elle prend la place des illustrations.
+
+* **héros** — l'image choisie dans le Personnalisateur occupe tout l'écran avec un léger travelling avant (effet Ken Burns) et un voile dégradé qui garde le texte lisible ;
+* **orbite et aliments flottants** — les photos des plats sont détourées en rond et gravitent autour de la photo principale, en parallaxe ;
+* **mosaïque « Ce que vous mangez, en vrai »** — une grille rythmée de photos de plats, zoom au survol, apparaît dès que trois plats sont illustrés ;
+* **fiche plat** — grande photo collante au défilement, vignettes rondes pour basculer entre les vues, la photo courante restant affichée jusqu'au chargement de la suivante ;
+* **secours** — sans photo, les illustrations SVG prennent le relais : le site n'est jamais vide.
+
+Les photos s'ajoutent depuis la fiche du plat (image mise en avant + encart « Photos supplémentaires ») ou en masse via **Health'eat → Photos**.
+
 == Animations ==
 
 Tout ce qui bouge est regroupé dans `assets/css/animations.css` et `assets/js/animations.js` :
