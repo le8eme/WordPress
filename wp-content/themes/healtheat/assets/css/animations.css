@@ -213,11 +213,21 @@
 /* Orbite centrale
    -------------------------------------------------- */
 
+/*
+ * Le diamètre de l'orbite pilote aussi le rayon des satellites : une seule
+ * variable à changer pour que rien ne dépasse sur petit écran.
+ */
 .orbit {
 	position: relative;
-	width: min(430px, 82vw);
+	--orbit-size: min(430px, 82vw);
+	--orbit-item: 62px;
+	width: var(--orbit-size);
 	aspect-ratio: 1;
 	margin-inline: auto;
+}
+
+.orbit--photos {
+	--orbit-item: 88px;
 }
 
 .orbit__core {
@@ -270,9 +280,13 @@
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	width: 62px;
-	margin: -31px 0 0 -31px;
-	transform: rotate(var(--angle)) translate(var(--radius)) rotate(calc(-1 * var(--angle)));
+	width: var(--orbit-item);
+	margin: calc( var(--orbit-item) / -2 ) 0 0 calc( var(--orbit-item) / -2 );
+	/* Le rayon retire la moitié de la vignette pour qu'elle reste dans le cadre. */
+	transform:
+		rotate(var(--angle))
+		translate(calc( var(--orbit-size) / 2 - var(--orbit-item) / 2 - 4px ))
+		rotate(calc(-1 * var(--angle)));
 }
 
 .orbit__item .food {
@@ -499,11 +513,6 @@
 	animation: none;
 }
 
-.orbit--photos .orbit__item {
-	width: 88px;
-	margin: -44px 0 0 -44px;
-}
-
 .orbit__core-food .photo-round {
 	box-shadow: 0 0 46px rgba(124, 255, 158, 0.45);
 	border-color: rgba(124, 255, 158, 0.6);
@@ -550,6 +559,29 @@
 
 .dish-single__photo.is-swapping {
 	opacity: 0.45;
+}
+
+/* Petit écran : on allège
+   -------------------------------------------------- */
+
+@media (max-width: 782px) {
+	/*
+	 * Les aliments flottants passaient devant le titre et les chiffres :
+	 * sur mobile, la lisibilité prime sur le décor.
+	 */
+	.food-field {
+		display: none;
+	}
+
+	.orbit {
+		--orbit-size: min(320px, 74vw);
+		--orbit-item: 58px;
+	}
+
+	.marquee__item {
+		padding-inline: 18px;
+		font-size: 0.78rem;
+	}
 }
 
 /* Accessibilité : on coupe tout

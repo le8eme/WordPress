@@ -72,6 +72,15 @@ Tags: restaurant, food, dark, one-column, custom-logo, custom-menu, featured-ima
 	box-sizing: border-box;
 }
 
+/*
+ * Le décor animé (halos, orbite en rotation) déborde de quelques pixels une
+ * fois transformé. `clip` sur la racine supprime ce ballotement latéral sans
+ * créer de conteneur de défilement — l'en-tête `position: sticky` survit.
+ */
+html {
+	overflow-x: clip;
+}
+
 body {
 	margin: 0;
 	background: var(--he-void);
@@ -1281,8 +1290,36 @@ body .healtheat-notice {
 		color: var(--he-text);
 	}
 
-	.site-header__cta {
-		display: none;
+	/*
+	 * Sur mobile l'en-tête tient trois éléments : marque, menu, commande.
+	 * On resserre au lieu de masquer — commander reste l'action principale.
+	 */
+	.site-header__inner {
+		gap: 12px;
+	}
+
+	.site-title {
+		font-size: 1.1rem;
+	}
+
+	.site-title__mark {
+		width: 32px;
+		height: 32px;
+	}
+
+	.site-branding {
+		min-width: 0;
+	}
+
+	.nav-toggle {
+		flex-shrink: 0;
+		margin-left: auto;
+	}
+
+	body .site-header__cta {
+		flex-shrink: 0;
+		padding: 9px 16px;
+		font-size: 0.85rem;
 	}
 
 	.hero {

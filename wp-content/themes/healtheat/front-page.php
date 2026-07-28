@@ -104,7 +104,7 @@ $healtheat_title = healtheat_option( 'healtheat_hero_title', __( 'Manger *sainem
 					foreach ( $healtheat_satellites as $healtheat_index => $healtheat_visual ) :
 						$healtheat_angle = $healtheat_index * ( 360 / count( $healtheat_satellites ) );
 						?>
-						<div class="orbit__item" style="--angle:<?php echo esc_attr( $healtheat_angle ); ?>deg;--radius:calc(min(430px, 82vw) / 2 - 34px)">
+						<div class="orbit__item" style="--angle:<?php echo esc_attr( $healtheat_angle ); ?>deg">
 							<?php echo $healtheat_visual; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</div>
 					<?php endforeach; ?>
