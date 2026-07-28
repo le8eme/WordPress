@@ -459,6 +459,22 @@
 	font-family: inherit;
 }
 
+/*
+ * Le pied de page reste vert profond alors que le reste passe au clair :
+ * son contenu doit donc être forcé en clair, widgets compris.
+ */
+.he-style-jardin .site-footer__col p,
+.he-style-jardin .site-footer .widget,
+.he-style-jardin .site-footer .healtheat-hours {
+	color: rgba(238, 243, 232, 0.82);
+}
+
+.he-style-jardin .site-footer .widget-title,
+.he-style-jardin .site-footer .widget h2,
+.he-style-jardin .site-footer .widget h3 {
+	color: #fff;
+}
+
 .he-style-jardin .site-footer__legal {
 	font-family: inherit;
 	border-top-color: rgba(255, 255, 255, 0.16);

@@ -126,7 +126,7 @@ function healtheat_plugin_active() {
  * @return string neon|jardin
  */
 function healtheat_style() {
-	$style = get_theme_mod( 'healtheat_style', 'neon' );
+	$style = get_theme_mod( 'healtheat_style', 'jardin' );
 
 	return in_array( $style, array( 'neon', 'jardin' ), true ) ? $style : 'neon';
 }
@@ -161,7 +161,7 @@ function healtheat_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'healtheat_style',
 		array(
-			'default'           => 'neon',
+			'default'           => 'jardin',
 			'sanitize_callback' => 'healtheat_sanitize_style',
 			'transport'         => 'refresh',
 		)
@@ -174,8 +174,8 @@ function healtheat_customize_register( $wp_customize ) {
 			'section' => 'healtheat_style',
 			'type'    => 'radio',
 			'choices' => array(
+				'jardin' => __( 'Jardin — clair, éditorial, naturel (par défaut)', 'healtheat-theme' ),
 				'neon'   => __( 'Néon nuit — sombre, futuriste, lumineux', 'healtheat-theme' ),
-				'jardin' => __( 'Jardin — clair, éditorial, naturel', 'healtheat-theme' ),
 			),
 		)
 	);
@@ -324,7 +324,7 @@ function healtheat_after_switch_theme() {
 
 		$pages = get_option( 'healtheat_pages', array() );
 
-		foreach ( array( 'concept', 'menu', 'order', 'contact' ) as $key ) {
+		foreach ( array( 'concept', 'menu', 'order', 'account', 'contact' ) as $key ) {
 			if ( empty( $pages[ $key ] ) ) {
 				continue;
 			}

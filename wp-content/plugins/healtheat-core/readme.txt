@@ -60,6 +60,27 @@ Photos achetées sur une banque payante (iStock, Getty, Adobe Stock…) : télé
 
 Quand un plat n'a pas encore de photo, le thème affiche une illustration de secours via le filtre `healtheat_dish_placeholder`.
 
+== Comptes clients et menu de la semaine ==
+
+La page **Mon espace** (shortcode `[healtheat_account]`) permet au client de créer un compte, puis de recevoir un déjeuner proposé pour chaque jour d'ouverture.
+
+Le profil comprend l'objectif (perdre du poids, maintenir, prendre du muscle, plus d'énergie), le niveau d'activité, éventuellement âge, taille et poids — d'où un besoin calorique estimé par la formule de Mifflin-St Jeor — puis les régimes et les allergies. Les allergies sont éliminatoires, les régimes cumulatifs.
+
+La composition retient les plats des catégories déclarées dans **Réglages → Menu de la semaine** (sans quoi un jus ou un dessert pourrait être proposé comme déjeuner), les note selon la proximité calorique et l'objectif, et évite de servir deux fois le même plat d'affilée. Quand trop peu de plats correspondent, le client est prévenu plutôt que de voir la même assiette toute la semaine.
+
+= Données de santé =
+
+Le client peut cocher des repères de sa dernière prise de sang (fer bas, cholestérol élevé, glycémie élevée, vitamine D basse, oméga-3 insuffisants). Ce sont des données de santé, traitées comme telles :
+
+* aucun document ni valeur d'analyse n'est demandé, seulement le repère ;
+* rien n'est enregistré sans une case de consentement distincte, dont la date est conservée ;
+* un bouton supprime l'ensemble en un clic ;
+* le profil est exposé aux outils d'export et d'effacement des données personnelles de WordPress (Outils → Exporter / Effacer les données personnelles).
+
+La correspondance entre un repère et les plats mis en avant est explicite : chaque repère pointe vers un **atout nutritionnel** que le restaurant attribue lui-même à ses recettes (taxonomie « Atouts »). Aucune déduction n'est faite à partir des macronutriments, et l'espace client affiche que ces suggestions ne remplacent pas l'avis d'un médecin ou d'un diététicien.
+
+Avant d'ouvrir cette fonction au public, vérifiez vos obligations : mention au registre des traitements, information des clients, et durée de conservation.
+
 == Réglages ==
 
 Menu **Health'eat → Réglages** :

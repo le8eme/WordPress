@@ -127,6 +127,29 @@ class Healtheat_Post_Types {
 			)
 		);
 
+		/*
+		 * Atouts nutritionnels : c'est le restaurant qui déclare ce qu'un plat
+		 * apporte. Aucune déduction automatique à partir des macros — la
+		 * recommandation reste fondée sur ce que la cuisine sait de ses plats.
+		 */
+		register_taxonomy(
+			'healtheat_nutrient',
+			'healtheat_dish',
+			array(
+				'labels'            => array(
+					'name'          => __( 'Atouts nutritionnels', 'healtheat' ),
+					'singular_name' => __( 'Atout nutritionnel', 'healtheat' ),
+					'add_new_item'  => __( 'Ajouter un atout', 'healtheat' ),
+					'menu_name'     => __( 'Atouts', 'healtheat' ),
+				),
+				'hierarchical'      => true,
+				'public'            => false,
+				'show_ui'           => true,
+				'show_in_rest'      => true,
+				'show_admin_column' => false,
+			)
+		);
+
 		register_taxonomy(
 			'healtheat_allergen',
 			'healtheat_dish',

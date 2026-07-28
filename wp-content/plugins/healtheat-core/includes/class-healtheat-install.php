@@ -53,6 +53,7 @@ class Healtheat_Install {
 			'healtheat_dish_cat' => array( 'Bowls', 'Salades', 'Petit-déjeuner', 'Jus & smoothies', 'Desserts' ),
 			'healtheat_diet'     => array( 'Vegan', 'Végétarien', 'Sans gluten', 'Riche en protéines', 'Léger' ),
 			'healtheat_allergen' => array( 'Gluten', 'Lactose', 'Fruits à coque', 'Sésame', 'Œuf', 'Soja', 'Poisson' ),
+			'healtheat_nutrient' => array( 'Riche en fer', 'Riche en fibres', 'Index glycémique bas', 'Source de vitamine D', 'Riche en oméga-3' ),
 		);
 
 		foreach ( $terms as $taxonomy => $names ) {
@@ -105,6 +106,7 @@ class Healtheat_Install {
 			wp_set_object_terms( $dish_id, $dish['category'], 'healtheat_dish_cat' );
 			wp_set_object_terms( $dish_id, $dish['diets'], 'healtheat_diet' );
 			wp_set_object_terms( $dish_id, $dish['allergens'], 'healtheat_allergen' );
+			wp_set_object_terms( $dish_id, $dish['nutrients'], 'healtheat_nutrient' );
 		}
 	}
 
@@ -126,6 +128,10 @@ class Healtheat_Install {
 			'order'   => array(
 				'title'   => 'Commander',
 				'content' => "[healtheat_order]",
+			),
+			'account' => array(
+				'title'   => 'Mon espace',
+				'content' => "<!-- wp:paragraph -->\n<p>Indiquez votre objectif, vos régimes et vos allergies : nous composons votre déjeuner pour toute la semaine.</p>\n<!-- /wp:paragraph -->\n\n[healtheat_account]",
 			),
 			'contact' => array(
 				'title'   => 'Nous trouver',
@@ -212,6 +218,7 @@ class Healtheat_Install {
 				'category'  => 'Bowls',
 				'diets'     => array( 'Vegan', 'Végétarien', 'Sans gluten' ),
 				'allergens' => array( 'Sésame', 'Soja' ),
+				'nutrients' => array( 'Riche en fibres', 'Index glycémique bas' ),
 				'featured'  => true,
 			),
 			array(
@@ -228,6 +235,7 @@ class Healtheat_Install {
 				'category'  => 'Bowls',
 				'diets'     => array( 'Riche en protéines' ),
 				'allergens' => array( 'Gluten', 'Lactose' ),
+				'nutrients' => array( 'Riche en fer' ),
 				'featured'  => true,
 			),
 			array(
@@ -244,6 +252,7 @@ class Healtheat_Install {
 				'category'  => 'Bowls',
 				'diets'     => array( 'Riche en protéines' ),
 				'allergens' => array( 'Poisson', 'Soja', 'Sésame' ),
+				'nutrients' => array( 'Riche en oméga-3', 'Source de vitamine D' ),
 				'featured'  => true,
 			),
 			array(
@@ -260,6 +269,7 @@ class Healtheat_Install {
 				'category'  => 'Salades',
 				'diets'     => array( 'Végétarien', 'Sans gluten', 'Léger' ),
 				'allergens' => array( 'Lactose' ),
+				'nutrients' => array( 'Riche en fer', 'Riche en fibres' ),
 				'featured'  => false,
 			),
 			array(
@@ -276,6 +286,7 @@ class Healtheat_Install {
 				'category'  => 'Salades',
 				'diets'     => array( 'Riche en protéines' ),
 				'allergens' => array( 'Gluten', 'Lactose', 'Œuf' ),
+				'nutrients' => array( 'Index glycémique bas' ),
 				'featured'  => false,
 			),
 			array(
@@ -292,6 +303,7 @@ class Healtheat_Install {
 				'category'  => 'Petit-déjeuner',
 				'diets'     => array( 'Vegan', 'Végétarien' ),
 				'allergens' => array( 'Gluten', 'Fruits à coque' ),
+				'nutrients' => array( 'Riche en fibres' ),
 				'featured'  => false,
 			),
 			array(
@@ -308,6 +320,7 @@ class Healtheat_Install {
 				'category'  => 'Jus & smoothies',
 				'diets'     => array( 'Vegan', 'Végétarien', 'Sans gluten', 'Léger' ),
 				'allergens' => array(),
+				'nutrients' => array(),
 				'featured'  => false,
 			),
 			array(
@@ -324,6 +337,7 @@ class Healtheat_Install {
 				'category'  => 'Desserts',
 				'diets'     => array( 'Vegan', 'Végétarien', 'Sans gluten' ),
 				'allergens' => array( 'Fruits à coque' ),
+				'nutrients' => array( 'Riche en fibres' ),
 				'featured'  => false,
 			),
 		);

@@ -60,6 +60,7 @@ class Healtheat_Settings {
 			'days_ahead'       => 5,
 			'min_order'        => 0,
 			'order_page_id'    => 0,
+			'plan_categories'  => array(),
 			'hours'            => $hours,
 		);
 	}
@@ -149,6 +150,16 @@ class Healtheat_Settings {
 		$clean['days_ahead']       = min( 30, max( 1, absint( $input['days_ahead'] ?? 5 ) ) );
 		$clean['min_order']        = healtheat_to_cents( $input['min_order'] ?? 0 );
 		$clean['order_page_id']    = absint( $input['order_page_id'] ?? 0 );
+
+		$clean['plan_categories'] = array();
+
+		foreach ( (array) ( $input['plan_categories'] ?? array() ) as $slug ) {
+			$slug = sanitize_title( $slug );
+
+			if ( $slug ) {
+				$clean['plan_categories'][] = $slug;
+			}
+		}
 
 		$clean['hours'] = array();
 
@@ -294,6 +305,35 @@ class Healtheat_Settings {
 							);
 							?>
 							<p class="description"><?php esc_html_e( 'Page contenant le shortcode [healtheat_order].', 'healtheat' ); ?></p>
+						</td>
+					</tr>
+				</table>
+
+				<h2><?php esc_html_e( 'Menu de la semaine', 'healtheat' ); ?></h2>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Catégories proposées', 'healtheat' ); ?></th>
+						<td>
+							<?php
+							$categories = get_terms( array( 'taxonomy' => 'healtheat_dish_cat', 'hide_empty' => false ) );
+
+							if ( is_wp_error( $categories ) || ! $categories ) {
+								esc_html_e( 'Aucune catégorie pour le moment.', 'healtheat' );
+							} else {
+								foreach ( $categories as $category ) {
+									printf(
+										'<label style="margin-right:18px"><input type="checkbox" name="%1$s[plan_categories][]" value="%2$s" %3$s /> %4$s</label>',
+										esc_attr( self::OPTION ),
+										esc_attr( $category->slug ),
+										checked( in_array( $category->slug, (array) $settings['plan_categories'], true ), true, false ),
+										esc_html( $category->name )
+									);
+								}
+							}
+							?>
+							<p class="description">
+								<?php esc_html_e( 'Seules ces catégories entrent dans le menu personnalisé des clients : de quoi éviter qu\'un jus ou un dessert soit proposé comme déjeuner. Aucune case cochée : toute la carte est utilisée.', 'healtheat' ); ?>
+							</p>
 						</td>
 					</tr>
 				</table>
