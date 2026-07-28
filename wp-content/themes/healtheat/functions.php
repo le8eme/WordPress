@@ -72,6 +72,16 @@ add_action( 'after_setup_theme', 'healtheat_content_width', 0 );
 function healtheat_theme_assets() {
 	wp_enqueue_style( 'healtheat-theme', get_stylesheet_uri(), array(), HEALTHEAT_THEME_VERSION );
 	wp_enqueue_style( 'healtheat-animations', get_template_directory_uri() . '/assets/css/animations.css', array( 'healtheat-theme' ), HEALTHEAT_THEME_VERSION );
+
+	// L'ambiance claire se superpose à l'ambiance néon, qui reste la base.
+	if ( 'jardin' === healtheat_style() ) {
+		wp_enqueue_style(
+			'healtheat-jardin',
+			get_template_directory_uri() . '/assets/css/style-jardin.css',
+			array( 'healtheat-theme', 'healtheat-animations' ),
+			HEALTHEAT_THEME_VERSION
+		);
+	}
 	wp_enqueue_script( 'healtheat-navigation', get_template_directory_uri() . '/assets/js/navigation.js', array(), HEALTHEAT_THEME_VERSION, true );
 	wp_enqueue_script( 'healtheat-animations', get_template_directory_uri() . '/assets/js/animations.js', array(), HEALTHEAT_THEME_VERSION, true );
 
@@ -111,6 +121,17 @@ function healtheat_plugin_active() {
 }
 
 /**
+ * Returns the selected visual style.
+ *
+ * @return string neon|jardin
+ */
+function healtheat_style() {
+	$style = get_theme_mod( 'healtheat_style', 'neon' );
+
+	return in_array( $style, array( 'neon', 'jardin' ), true ) ? $style : 'neon';
+}
+
+/**
  * Returns a theme option with its default value.
  *
  * @param string $key     Option key.
@@ -128,6 +149,37 @@ function healtheat_option( $key, $default = '' ) {
  * @return void
  */
 function healtheat_customize_register( $wp_customize ) {
+	$wp_customize->add_section(
+		'healtheat_style',
+		array(
+			'title'       => __( 'Ambiance Health\'eat', 'healtheat-theme' ),
+			'description' => __( 'Deux habillages complets, mêmes contenus et mêmes fonctions.', 'healtheat-theme' ),
+			'priority'    => 29,
+		)
+	);
+
+	$wp_customize->add_setting(
+		'healtheat_style',
+		array(
+			'default'           => 'neon',
+			'sanitize_callback' => 'healtheat_sanitize_style',
+			'transport'         => 'refresh',
+		)
+	);
+
+	$wp_customize->add_control(
+		'healtheat_style',
+		array(
+			'label'   => __( 'Habillage', 'healtheat-theme' ),
+			'section' => 'healtheat_style',
+			'type'    => 'radio',
+			'choices' => array(
+				'neon'   => __( 'Néon nuit — sombre, futuriste, lumineux', 'healtheat-theme' ),
+				'jardin' => __( 'Jardin — clair, éditorial, naturel', 'healtheat-theme' ),
+			),
+		)
+	);
+
 	$wp_customize->add_section(
 		'healtheat_home',
 		array(
@@ -465,7 +517,19 @@ function healtheat_body_class( $classes ) {
 		$classes[] = 'healtheat-no-plugin';
 	}
 
+	$classes[] = 'he-style-' . healtheat_style();
+
 	return $classes;
+}
+
+/**
+ * Sanitizes the style choice.
+ *
+ * @param mixed $value Raw value.
+ * @return string
+ */
+function healtheat_sanitize_style( $value ) {
+	return in_array( $value, array( 'neon', 'jardin' ), true ) ? $value : 'neon';
 }
 add_filter( 'body_class', 'healtheat_body_class' );
 

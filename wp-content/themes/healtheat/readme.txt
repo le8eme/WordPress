@@ -20,6 +20,15 @@ Health'eat est un thème classique (PHP) à l'interface sombre néon, animée pa
 
 Le thème fonctionne seul, mais la carte et la commande nécessitent l'extension **Health'eat Core**.
 
+== Ambiances ==
+
+Le thème embarque deux habillages complets, à choisir dans **Apparence → Personnaliser → Ambiance Health'eat** :
+
+* **Néon nuit** (par défaut) — fond sombre, halos verts et cyan, typographie mono pour les données, aliments lumineux en orbite ;
+* **Jardin** — papier crème, titres en serif, verts naturels et touche terracotta, décor apaisé (ni halos ni aliments flottants).
+
+Mêmes gabarits, mêmes fonctions : l'ambiance claire est une feuille supplémentaire (`assets/css/style-jardin.css`) qui redéfinit les variables et neutralise ce qui est spécifiquement nocturne. Attention en la modifiant : les variables de l'extension (`--healtheat-*`) doivent y être réécrites en dur, car celles de la feuille principale sont déclarées sur `:root` où la substitution a déjà eu lieu.
+
 == Photos ==
 
 Le thème est pensé photo d'abord : dès qu'un plat a une image mise en avant, elle prend la place des illustrations.
