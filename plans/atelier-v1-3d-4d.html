@@ -1,0 +1,733 @@
+<title>Atelier V1 — Maquette 3D / 4D, indice V2</title>
+<style>
+  :root {
+    --paper:#E9ECE7; --ink:#15181B; --ink-2:#4A524E; --rule:#98A199;
+    --card:#F3F5F1; --card-line:#D2D8CF; --inset:#DFE3DC;
+    --sky-1:#DCE1DB; --sky-2:#C4CBC4;
+    --red:#B3352C; --blue:#2B5F8C; --green:#3E7A52; --amber:#B0791C;
+    --font-plate:"Arial Narrow","Helvetica Neue Condensed",Impact,Helvetica,Arial,sans-serif;
+    --font-body:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-data:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#131719; --ink:#E4E8E2; --ink-2:#9AA49E; --rule:#5A6560;
+      --card:#191E20; --card-line:#2E3639; --inset:#0E1214;
+      --sky-1:#1B2124; --sky-2:#0D1113;
+      --red:#E06553; --blue:#6BA3D4; --green:#6BAE81; --amber:#D9A441;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#131719; --ink:#E4E8E2; --ink-2:#9AA49E; --rule:#5A6560;
+    --card:#191E20; --card-line:#2E3639; --inset:#0E1214;
+    --sky-1:#1B2124; --sky-2:#0D1113;
+    --red:#E06553; --blue:#6BA3D4; --green:#6BAE81; --amber:#D9A441;
+  }
+  :root[data-theme="light"] {
+    --paper:#E9ECE7; --ink:#15181B; --ink-2:#4A524E; --rule:#98A199;
+    --card:#F3F5F1; --card-line:#D2D8CF; --inset:#DFE3DC;
+    --sky-1:#DCE1DB; --sky-2:#C4CBC4;
+    --red:#B3352C; --blue:#2B5F8C; --green:#3E7A52; --amber:#B0791C;
+  }
+
+  body { background:var(--paper); color:var(--ink); font-family:var(--font-body);
+         font-size:15px; line-height:1.55; margin:0; padding:clamp(12px,2.6vw,30px); }
+  .sheet { max-width:1360px; margin:0 auto; border:1.5px solid var(--ink);
+           background:var(--paper); padding:clamp(12px,2vw,20px);
+           display:flex; flex-direction:column; gap:clamp(14px,2vw,22px); }
+
+  .plate { display:flex; flex-wrap:wrap; align-items:flex-end; gap:12px 24px;
+           border-bottom:1.5px solid var(--ink); padding-bottom:12px; }
+  .plate h1 { font-family:var(--font-plate); font-weight:700; font-size:clamp(22px,4.2vw,38px);
+              letter-spacing:.055em; text-transform:uppercase; margin:0; line-height:1; text-wrap:balance; }
+  .plate .sub { font-family:var(--font-plate); text-transform:uppercase; letter-spacing:.16em;
+                font-size:12px; color:var(--ink-2); margin:6px 0 0; }
+  .badge { font-family:var(--font-plate); text-transform:uppercase; letter-spacing:.1em;
+           font-size:12px; color:var(--paper); background:var(--red); padding:4px 11px; align-self:center; }
+  .plate .meta { margin-left:auto; display:flex; gap:20px; font-family:var(--font-data);
+                 font-size:11.5px; color:var(--ink-2); }
+  .plate .meta b { display:block; color:var(--ink); font-size:13px; font-variant-numeric:tabular-nums; }
+
+  .stage { display:grid; grid-template-columns:minmax(0,1fr) 306px; gap:16px; align-items:start; }
+  @media (max-width:960px) { .stage { grid-template-columns:minmax(0,1fr); } }
+
+  .viewwrap { position:relative; border:1px solid var(--card-line); background:var(--inset); }
+  canvas { display:block; width:100%; height:auto; aspect-ratio:4/3; touch-action:none; cursor:grab; }
+  canvas:active { cursor:grabbing; }
+  canvas:focus-visible { outline:2px solid var(--blue); outline-offset:-2px; }
+  @media (max-width:620px) { canvas { aspect-ratio:1/1; } }
+
+  .hud { position:absolute; top:10px; left:10px; pointer-events:none;
+         font-family:var(--font-data); font-size:11px; color:var(--ink);
+         background:color-mix(in srgb, var(--card) 86%, transparent);
+         border:1px solid var(--card-line); padding:8px 11px; display:grid; gap:3px; }
+  .hud b { font-size:15px; letter-spacing:.02em; font-variant-numeric:tabular-nums; }
+  .hud .ph { color:var(--red); font-weight:700; }
+  .hint { position:absolute; right:10px; bottom:10px; pointer-events:none;
+          font-family:var(--font-data); font-size:10.5px; color:var(--ink-2);
+          background:color-mix(in srgb, var(--card) 80%, transparent); padding:5px 9px;
+          border:1px solid var(--card-line); }
+
+  .bar { display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px;
+         border:1px solid var(--card-line); background:var(--card); padding:11px 13px; }
+  .bar .grow { flex:1 1 260px; display:flex; align-items:center; gap:11px; }
+  button { font-family:var(--font-body); font-size:12.5px; color:var(--ink);
+           background:var(--paper); border:1px solid var(--card-line); padding:6px 12px;
+           cursor:pointer; }
+  button:hover { border-color:var(--rule); }
+  button[aria-pressed="true"] { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  button.play { min-width:96px; font-weight:650; }
+  button:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+  .seg { display:flex; gap:0; }
+  .seg button { border-right-width:0; }
+  .seg button:last-child { border-right-width:1px; }
+  label.tog { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-2); cursor:pointer; }
+  label.tog input { accent-color:var(--blue); }
+  input[type=range] { flex:1 1 auto; min-width:150px; accent-color:var(--red); }
+  .wk { font-family:var(--font-data); font-size:12.5px; font-variant-numeric:tabular-nums;
+        white-space:nowrap; color:var(--ink-2); }
+  .wk b { color:var(--ink); font-size:14px; }
+
+  aside { display:flex; flex-direction:column; gap:14px; }
+  .card { border:1px solid var(--card-line); background:var(--card); padding:13px 14px; }
+  .card h2 { font-family:var(--font-plate); text-transform:uppercase; letter-spacing:.14em;
+             font-size:11.5px; margin:0 0 11px; color:var(--ink-2);
+             border-bottom:1px solid var(--card-line); padding-bottom:7px; }
+
+  .gantt { display:flex; flex-direction:column; gap:7px; }
+  .row { display:grid; grid-template-columns:1fr; gap:3px; }
+  .row .lab { display:flex; align-items:baseline; gap:7px; font-size:12.5px; }
+  .row .lab .no { font-family:var(--font-data); font-size:10.5px; color:#fff;
+                  background:var(--rule); width:17px; height:17px; display:grid; place-items:center;
+                  border-radius:2px; flex:none; }
+  .row .lab .wks { margin-left:auto; font-family:var(--font-data); font-size:10.5px; color:var(--ink-2);
+                   font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .track { position:relative; height:9px; background:var(--inset); border:1px solid var(--card-line); }
+  .track .fill { position:absolute; top:0; bottom:0; background:var(--rule); }
+  .row[data-state="todo"] { opacity:.42; }
+  .row[data-state="doing"] .no, .row[data-state="doing"] .fill { background:var(--red); }
+  .row[data-state="done"] .no, .row[data-state="done"] .fill { background:var(--green); }
+  .row[data-state="doing"] .lab { font-weight:650; }
+  .cursor { position:absolute; top:-3px; bottom:-3px; width:1.5px; background:var(--ink); }
+
+  .lg { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; font-size:12.5px; }
+  .lg li { display:grid; grid-template-columns:15px minmax(0,1fr); gap:9px; align-items:center; }
+  .sw { width:13px; height:13px; border:1px solid rgba(0,0,0,.28); }
+  .lg small { color:var(--ink-2); }
+
+  .cols { display:grid; grid-template-columns:repeat(auto-fit,minmax(266px,1fr)); gap:14px; align-items:start; }
+  ul.notes { margin:0; padding-left:17px; display:flex; flex-direction:column; gap:8px; font-size:13px; }
+  ul.notes b { font-weight:650; }
+  .flag { color:var(--red); font-weight:650; }
+  dl.spec { margin:0; display:grid; grid-template-columns:auto 1fr; gap:5px 14px; font-size:13px; }
+  dl.spec dt { color:var(--ink-2); }
+  dl.spec dd { margin:0; font-family:var(--font-data); font-variant-numeric:tabular-nums; text-align:right; }
+  footer { font-family:var(--font-data); font-size:11px; color:var(--ink-2);
+           border-top:1px solid var(--card-line); padding-top:11px; display:flex;
+           flex-wrap:wrap; gap:6px 20px; }
+  footer a { color:var(--blue); }
+  @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+</style>
+
+<div class="sheet">
+
+  <div class="plate">
+    <div>
+      <h1>Atelier V1 — Maquette 3D / 4D</h1>
+      <p class="sub">Volumétrie navigable &amp; phasage de mise en œuvre · 18,32 × 24,62 × 4,50 m</p>
+    </div>
+    <span class="badge">Indice V2</span>
+    <div class="meta">
+      <div>Emprise<b>451,1 m²</b></div>
+      <div>Surfaces utiles<b>129,0 m²</b></div>
+      <div>Durée chantier<b>12 semaines</b></div>
+      <div>Phases<b>7</b></div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div>
+      <div class="viewwrap">
+        <canvas id="view" tabindex="0" aria-label="Vue 3D de l'atelier : bâtiment de 18,32 sur 24,62 mètres contenant la cabine de peinture, le pont ciseaux Weber SH-3500, le pont 2 colonnes pivoté de 90 degrés, le poste pneus et le vestiaire. Faites glisser pour pivoter, molette pour zoomer, curseur de semaine pour dérouler le phasage."></canvas>
+        <div class="hud">
+          <span>SEMAINE</span>
+          <b id="hudWeek">S00</b>
+          <span class="ph" id="hudPhase">—</span>
+          <span id="hudCount"></span>
+        </div>
+        <div class="hint">glisser : pivoter · molette : zoomer · flèches : orbiter</div>
+      </div>
+
+      <div class="bar" style="margin-top:14px">
+        <button class="play" id="play" aria-pressed="false">▶ Dérouler</button>
+        <div class="grow">
+          <input type="range" id="week" min="0" max="12" step="0.05" value="12" aria-label="Semaine du chantier">
+          <span class="wk">S<b id="wkNum">12</b>/12</span>
+        </div>
+      </div>
+
+      <div class="bar" style="margin-top:10px">
+        <div class="seg" role="group" aria-label="Points de vue">
+          <button data-view="axo" aria-pressed="true">Axonométrie</button>
+          <button data-view="top" aria-pressed="false">Dessus</button>
+          <button data-view="door" aria-pressed="false">Depuis l'entrée</button>
+          <button data-view="lifts" aria-pressed="false">Postes ponts</button>
+        </div>
+        <label class="tog"><input type="checkbox" id="tWalls" checked> murs</label>
+        <label class="tog"><input type="checkbox" id="tCars" checked> véhicules</label>
+        <label class="tog"><input type="checkbox" id="tLed" checked> éclairage</label>
+        <label class="tog"><input type="checkbox" id="tMark" checked> marquage</label>
+      </div>
+    </div>
+
+    <aside>
+      <section class="card">
+        <h2>Phasage — la 4<sup>e</sup> dimension</h2>
+        <div class="gantt" id="gantt"></div>
+      </section>
+
+      <section class="card">
+        <h2>Repères de la maquette</h2>
+        <ul class="lg">
+          <li><span class="sw" style="background:#F4F5F2"></span><div>Cabine de peinture <small>+ groupe technique</small></div></li>
+          <li><span class="sw" style="background:#282D31"></span><div>Ponts élévateurs &amp; matériel</div></li>
+          <li><span class="sw" style="background:#DCE0D9"></span><div>Labo, plans de travail, vestiaire</div></li>
+          <li><span class="sw" style="background:#C8A227"></span><div>Armoire de sécurité ventilée</div></li>
+          <li><span class="sw" style="background:#E0B23A"></span><div>Marquage au sol</div></li>
+          <li><span class="sw" style="background:#67737B"></span><div>Gabarits véhicules <small>4,80 × 1,85 m</small></div></li>
+        </ul>
+      </section>
+    </aside>
+  </div>
+
+  <div class="cols">
+    <section class="card">
+      <h2>Ce que la 3D confirme</h2>
+      <ul class="notes">
+        <li><b>Le 2 colonnes pivoté tient largement.</b> 3,15 m de haut sous 4,50 m de plafond, et les bras déployés balaient 2,95 m sans toucher le mur ouest.</li>
+        <li><b>La différence de niveau entre les deux ponts saute aux yeux :</b> le SH-3500 monte à 0,95 m, le 2 colonnes à 1,90 m. Les deux postes ne font pas le même métier.</li>
+        <li><b>L'armoire de sécurité ventilée</b> occupe l'emplacement libéré par le local peinture supprimé, contre la façade est.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Hypothèses de planning</h2>
+      <dl class="spec">
+        <dt>Durée totale</dt><dd>12 semaines</dd>
+        <dt>Dalle &amp; structure</dt><dd>S00 → S03</dd>
+        <dt>Enveloppe &amp; porte</dt><dd>S03 → S05</dd>
+        <dt>Réseaux &amp; éclairage</dt><dd>S04 → S07</dd>
+        <dt>Cabine de peinture</dt><dd>S06 → S09</dd>
+        <dt>Ponts élévateurs</dt><dd>S08 → S10</dd>
+        <dt>Aménagements</dt><dd>S09 → S11</dd>
+        <dt>Marquage &amp; réception</dt><dd>S11 → S12</dd>
+      </dl>
+      <p style="margin:10px 0 0;font-size:12px;color:var(--ink-2)">
+        Chevauchements volontaires : les réseaux démarrent avant la fin de l'enveloppe,
+        les aménagements pendant le scellement des ponts.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Limites de la maquette</h2>
+      <ul class="notes">
+        <li>Volumétrie d'implantation, <b>pas un modèle BIM</b> : les matériels sont représentés à leurs cotes d'encombrement réelles, sans détail de mécanisme.</li>
+        <li>Le planning est une <b>hypothèse de séquence</b> à caler avec les entreprises : délais d'appro de la cabine et des ponts non contractualisés.</li>
+        <li><span class="flag">Le scellement des ponts</span> suppose une dalle conforme (épaisseur et ferraillage) — à vérifier avant percement.</li>
+      </ul>
+    </section>
+  </div>
+
+  <footer>
+    <span>Atelier V1 — Style Tesla · indice V2 · maquette 3D / 4D</span>
+    <span>Cotes matériels : Weber EXPERT SH-3500 · Weber 2 colonnes 4 T</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================ géométrie ============================ */
+  var W = 18.32, D = 24.62, H = 4.50, T = 0.30;   // enveloppe intérieure
+  var FACES = [];
+
+  function sub(a, b) { return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; }
+  function cross(a, b) {
+    return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  }
+  function dot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+  function norm(a) {
+    var l = Math.hypot(a[0], a[1], a[2]) || 1;
+    return [a[0] / l, a[1] / l, a[2] / l];
+  }
+
+  function rgb(hex) {
+    return [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
+  }
+
+  // x vers l'est, y vers le haut, z vers le sud (z = D : mur de la porte)
+  function box(x, y, z, w, h, d, color, phase, o) {
+    o = o || {};
+    var cx = x + w / 2, cy = y + h / 2, cz = z + d / 2;
+    var rx = o.rx || 0, ry = o.ry || 0;
+    var cX = Math.cos(rx), sX = Math.sin(rx), cY = Math.cos(ry), sY = Math.sin(ry);
+    function pt(a, b, c) {
+      var b2 = b * cX - c * sX, c2 = b * sX + c * cX; b = b2; c = c2;
+      var a2 = a * cY + c * sY, c3 = -a * sY + c * cY; a = a2; c = c3;
+      return [cx + a, cy + b, cz + c];
+    }
+    var hw = w / 2, hh = h / 2, hd = d / 2;
+    var v = [
+      pt(-hw, -hh, -hd), pt(hw, -hh, -hd), pt(hw, -hh, hd), pt(-hw, -hh, hd),
+      pt(-hw, hh, -hd), pt(hw, hh, -hd), pt(hw, hh, hd), pt(-hw, hh, hd)
+    ];
+    var F = [[4, 5, 6, 7], [3, 2, 1, 0], [0, 1, 5, 4], [2, 3, 7, 6], [3, 0, 4, 7], [1, 2, 6, 5]];
+    for (var i = 0; i < F.length; i++) {
+      var p = [v[F[i][0]], v[F[i][1]], v[F[i][2]], v[F[i][3]]];
+      FACES.push({
+        p: p,
+        n: norm(cross(sub(p[1], p[0]), sub(p[2], p[0]))),
+        c: rgb(color),
+        phase: phase,
+        group: o.group || null,
+        flat: !!o.flat,
+        cullDir: o.cullDir || null,
+        cullPt: o.cullPt || null
+      });
+    }
+  }
+
+  /* -- matériaux -- */
+  var MAT = {
+    dalle: '#9EA49C', murInt: '#D3D7D0', cabine: '#F4F5F2', cabineTrim: '#C2C8C0',
+    vitrage: '#7FA0B0', acier: '#282D31', acierClair: '#3B4246', coffret: '#1C2023',
+    mobilier: '#DCE0D9', mobilierBase: '#9DA49C', porte: '#BFC4BF',
+    led: '#E3DECB', reseau: '#495862', securite: '#C8A227', extincteur: '#A8322A',
+    marquage: '#E0B23A', vehicule: '#67737B', vitreAuto: '#333E45', pneu: '#191C1F'
+  };
+
+  /* -- P1 : dalle, structure, murs -- */
+  box(-T, -0.28, -T, W + 2 * T, 0.28, D + 2 * T, MAT.dalle, 1);
+  // murs, avec direction de masquage : un mur disparaît si la caméra est de son côté extérieur
+  box(-T, 0, -T, W + 2 * T, H, T, MAT.murInt, 1,
+    { group: 'wall', cullDir: [0, 0, -1], cullPt: [0, 0, -T] });                      // nord
+  box(-T, 0, 0, T, H, D, MAT.murInt, 1,
+    { group: 'wall', cullDir: [-1, 0, 0], cullPt: [-T, 0, 0] });                      // ouest
+  box(W, 0, 0, T, H, D, MAT.murInt, 1,
+    { group: 'wall', cullDir: [1, 0, 0], cullPt: [W + T, 0, 0] });                    // est
+  box(-T, 0, D, 2.80, H, T, MAT.murInt, 1,
+    { group: 'wall', cullDir: [0, 0, 1], cullPt: [0, 0, D + T] });                    // sud gauche
+  box(6.50, 0, D, 12.12, H, T, MAT.murInt, 1,
+    { group: 'wall', cullDir: [0, 0, 1], cullPt: [0, 0, D + T] });                    // sud droite
+  box(2.50, 4.00, D, 4.00, 0.50, T, MAT.murInt, 1,
+    { group: 'wall', cullDir: [0, 0, 1], cullPt: [0, 0, D + T] });                    // linteau
+
+  // teintes de zones au sol (lecture de l'implantation dès la dalle)
+  function zone(x, z, w, d, col) { box(x, 0, z, w, 0.006, d, col, 1, { group: 'zone' }); }
+  zone(0.40, 0.40, 8.65, 4.10, '#B6BCB4');
+  zone(9.85, 0.40, 8.07, 3.66, '#B2B8B0');
+  zone(7.40, 8.20, 5.50, 5.00, '#B2B8B0');
+  zone(0.90, 14.75, 6.00, 3.50, '#B2B8B0');
+  zone(13.72, 18.60, 4.00, 2.875, '#B2B8B0');
+
+  /* -- P2 : porte sectionnelle -- */
+  for (var k = 0; k < 4; k++) {
+    box(2.50, k * 1.00 + 0.03, D + 0.02, 4.00, 0.94, 0.10, MAT.porte, 2, { group: 'door' });
+  }
+  box(2.44, 0, D + 0.14, 0.12, 4.10, 0.12, MAT.acierClair, 2, { group: 'door' });
+  box(6.44, 0, D + 0.14, 0.12, 4.10, 0.12, MAT.acierClair, 2, { group: 'door' });
+
+  /* -- P3 : réseaux, éclairage, alimentations -- */
+  var lx = [2.6, 6.4, 10.2, 14.0, 17.2], lz = [3.2, 8.0, 12.6, 17.2, 21.4];
+  for (var a = 0; a < lx.length; a++) {
+    for (var b = 0; b < lz.length; b++) {
+      box(lx[a] - 0.07, H - 0.14, lz[b] - 0.95, 0.14, 0.07, 1.90, MAT.led, 3, { group: 'led' });
+    }
+  }
+  box(0.02, 3.10, 0.02, W - 0.04, 0.09, 0.09, MAT.reseau, 3, { group: 'net' });   // air comprimé nord
+  box(0.02, 3.10, 0.02, 0.09, 0.09, D - 0.04, MAT.reseau, 3, { group: 'net' });   // ouest
+  box(W - 0.11, 3.10, 0.02, 0.09, 0.09, D - 0.04, MAT.reseau, 3, { group: 'net' }); // est
+  box(17.52, 0, 1.10, 0.70, 2.00, 0.90, MAT.coffret, 3);                          // TGBT 400 V
+  box(17.42, 0, 3.10, 0.80, 0.90, 0.60, MAT.mobilier, 3);                         // point d'eau + évier
+  box(17.36, 0.90, 3.16, 0.90, 0.06, 0.68, MAT.mobilierBase, 3);
+
+  /* -- P4 : cabine de peinture SellerPro NS7000 + groupe technique -- */
+  box(0.40, 0, 0.40, 7.20, 3.20, 4.10, MAT.cabine, 4, { group: 'cab' });
+  box(0.40, 0, 4.44, 7.20, 3.20, 0.10, MAT.cabineTrim, 4, { group: 'cab' });
+  for (var g = 0; g < 6; g++) {
+    box(0.55 + g * 1.16, 1.05, 4.40, 0.96, 1.15, 0.08, MAT.vitrage, 4, { group: 'cab' });
+  }
+  box(0.40, 3.20, 0.40, 7.20, 0.14, 4.20, MAT.cabineTrim, 4, { group: 'cab' });
+  box(7.60, 0, 0.40, 1.45, 3.60, 4.10, MAT.cabineTrim, 4, { group: 'cab' });      // groupe technique
+  box(9.05, 2.70, 1.70, 1.35, 0.66, 0.66, MAT.mobilierBase, 4, { group: 'cab' }); // gaine horizontale
+  box(9.78, 2.70, 1.70, 0.66, 1.72, 0.66, MAT.mobilierBase, 4, { group: 'cab' }); // gaine verticale
+
+  /* -- P5 : ponts élévateurs -- */
+  // pont ciseaux Weber EXPERT SH-3500, représenté en position haute (0,95 m)
+  var SX = 10.15, SZ = 10.70, OW = 1.94, OL = 1.75, PW = 0.555, LIFT = 0.95;
+  box(SX - OW / 2, 0, SZ - OL / 2, OW, 0.14, OL, MAT.acier, 5, { group: 'lift' });
+  var runX = [SX - OW / 2, SX + OW / 2 - PW];
+  for (var r = 0; r < 2; r++) {
+    box(runX[r], LIFT, SZ - OL / 2, PW, 0.13, OL, MAT.acierClair, 5, { group: 'lift' });
+    box(runX[r], LIFT + 0.02, SZ - OL / 2 - 0.30, PW, 0.09, 0.30, MAT.acierClair, 5, { group: 'lift' });
+    box(runX[r], LIFT + 0.02, SZ + OL / 2, PW, 0.09, 0.30, MAT.acierClair, 5, { group: 'lift' });
+    // croisillons du ciseau
+    box(runX[r] + PW / 2 - 0.05, 0.52, SZ - 0.06, 0.10, 1.72, 0.12, MAT.acier, 5, { group: 'lift', rx: 0.97 });
+    box(runX[r] + PW / 2 - 0.05, 0.52, SZ - 0.06, 0.10, 1.72, 0.12, MAT.acier, 5, { group: 'lift', rx: -0.97 });
+  }
+  box(12.15, 0, 10.48, 0.50, 1.20, 0.45, MAT.coffret, 5, { group: 'lift' });        // coffret hydraulique
+  box(12.19, 1.02, 10.46, 0.42, 0.16, 0.03, MAT.extincteur, 5, { group: 'lift' });
+
+  // pont 2 colonnes Weber 4 T — PIVOTÉ 90° : colonnes sur l'axe nord-sud
+  var PX = 3.60, PA = 14.80, PB = 17.58, PS = 0.60, PH = 3.15, ARM = 1.30, AY = 1.42;
+  box(PX - 0.16, 0, PA - 0.16, PS + 0.32, 0.10, PS + 0.32, MAT.acier, 5, { group: 'lift' });
+  box(PX - 0.16, 0, PB - 0.16, PS + 0.32, 0.10, PS + 0.32, MAT.acier, 5, { group: 'lift' });
+  box(PX, 0, PA, PS, PH, PS, MAT.acier, 5, { group: 'lift' });
+  box(PX, 0, PB, PS, PH, PS, MAT.acier, 5, { group: 'lift' });
+  box(PX + 0.06, PH, PA, PS - 0.12, 0.22, PB - PA + PS, MAT.acierClair, 5, { group: 'lift' }); // traverse haute
+  box(PX - 0.06, AY - 0.30, PA + 0.04, PS + 0.12, 0.52, PS - 0.08, MAT.acierClair, 5, { group: 'lift' });
+  box(PX - 0.06, AY - 0.30, PB + 0.04, PS + 0.12, 0.52, PS - 0.08, MAT.acierClair, 5, { group: 'lift' });
+  var armZ = [PA + PS + 0.02, PB - 0.18];
+  for (var q = 0; q < 2; q++) {
+    box(PX + PS, AY, armZ[q], ARM, 0.13, 0.17, MAT.acierClair, 5, { group: 'lift' });
+    box(PX - ARM, AY, armZ[q], ARM, 0.13, 0.17, MAT.acierClair, 5, { group: 'lift' });
+    box(PX + PS + ARM - 0.14, AY + 0.13, armZ[q] - 0.02, 0.20, 0.10, 0.20, MAT.acier, 5, { group: 'lift' });
+    box(PX - ARM - 0.06, AY + 0.13, armZ[q] - 0.02, 0.20, 0.10, 0.20, MAT.acier, 5, { group: 'lift' });
+  }
+
+  /* -- P6 : labo, plans de travail, poste pneus, vestiaire -- */
+  box(9.85, 0, 0.42, 8.07, 0.84, 0.66, MAT.mobilierBase, 6, { group: 'fit' });     // caissons bas
+  box(9.79, 0.84, 0.38, 8.19, 0.08, 0.76, MAT.mobilier, 6, { group: 'fit' });      // plan de travail
+  box(9.85, 1.62, 0.38, 8.07, 0.80, 0.42, MAT.mobilier, 6, { group: 'fit' });      // meubles hauts
+  for (var wb = 0; wb < 7; wb++) {                                                 // refends des caissons
+    box(9.85 + wb * 1.15, 0, 0.40, 0.05, 0.84, 0.68, MAT.acierClair, 6, { group: 'fit' });
+  }
+  box(16.20, 0.92, 0.44, 0.70, 0.95, 0.62, MAT.acier, 6, { group: 'fit' });        // mélangeuse peinture
+  box(12.95, 0, 3.12, 1.90, 0.82, 0.80, MAT.mobilierBase, 6, { group: 'fit' });    // table de préparation
+  box(12.89, 0.82, 3.06, 2.02, 0.06, 0.92, MAT.mobilier, 6, { group: 'fit' });
+  box(10.20, 0, 3.00, 1.20, 1.55, 0.70, MAT.acier, 6, { group: 'fit' });           // colonne aspirante
+  box(17.10, 0, 6.60, 0.90, 1.30, 0.62, MAT.acierClair, 6, { group: 'fit' });      // compresseur
+
+  box(14.06, 0, 20.16, 1.00, 1.70, 1.00, MAT.acier, 6, { group: 'fit' });     // démonte-pneus
+  box(15.44, 0, 20.16, 0.90, 1.42, 1.00, MAT.acier, 6, { group: 'fit' });     // équilibreuse
+  box(16.72, 0, 20.10, 0.74, 2.10, 1.10, MAT.acierClair, 6, { group: 'fit' }); // rack
+  for (var t = 0; t < 6; t++) {
+    box(16.78, 0.28 + Math.floor(t / 2) * 0.66, 20.18 + (t % 2) * 0.48, 0.62, 0.44, 0.44, MAT.pneu, 6, { group: 'fit' });
+  }
+
+  var VX = 15.72, VZ = 16.60, VW = 2.00, VD = 2.00, VH = 2.40;
+  box(VX, 0, VZ, 0.88, VH, 0.09, MAT.mobilier, 6, { group: 'fit' });          // nord (avec passage)
+  box(VX + 1.58, 0, VZ, 0.42, VH, 0.09, MAT.mobilier, 6, { group: 'fit' });
+  box(VX, 0, VZ + VD - 0.09, VW, VH, 0.09, MAT.mobilier, 6, { group: 'fit' });
+  box(VX, 0, VZ, 0.09, VH, VD, MAT.mobilier, 6, { group: 'fit' });
+  box(VX + VW - 0.09, 0, VZ, 0.09, VH, VD, MAT.mobilier, 6, { group: 'fit' });
+  box(VX + 0.14, 0, VZ + 1.48, 1.72, 0.44, 0.36, MAT.mobilierBase, 6, { group: 'fit' });
+  box(VX + 0.14, 1.62, VZ + 0.12, 1.72, 0.28, 0.07, MAT.mobilierBase, 6, { group: 'fit' });
+
+  /* -- P7 : marquage, sécurité, mise en service -- */
+  function mark(x, z, w, d) {
+    box(x, 0.012, z, w, 0.012, 0.10, MAT.marquage, 7, { group: 'mark', flat: true });
+    box(x, 0.012, z + d - 0.10, w, 0.012, 0.10, MAT.marquage, 7, { group: 'mark', flat: true });
+    box(x, 0.012, z, 0.10, 0.012, d, MAT.marquage, 7, { group: 'mark', flat: true });
+    box(x + w - 0.10, 0.012, z, 0.10, 0.012, d, MAT.marquage, 7, { group: 'mark', flat: true });
+  }
+  mark(7.40, 8.20, 5.50, 5.00);
+  mark(0.90, 14.75, 6.00, 3.50);
+  mark(13.72, 18.60, 4.00, 2.875);
+  box(2.50, 0.012, 20.20, 4.00, 0.012, 0.12, MAT.marquage, 7, { group: 'mark', flat: true });
+
+  box(17.42, 0, 5.20, 0.86, 1.95, 0.60, MAT.securite, 7);                      // armoire ventilée
+  box(17.30, 1.95, 5.34, 0.24, 0.90, 0.24, MAT.reseau, 7);                     // extraction armoire
+  box(0.06, 1.00, 6.20, 0.22, 0.60, 0.22, MAT.extincteur, 7);
+  box(0.06, 1.00, 19.40, 0.22, 0.60, 0.22, MAT.extincteur, 7);
+  box(W - 0.28, 1.00, 22.60, 0.22, 0.60, 0.22, MAT.extincteur, 7);
+
+  // gabarits véhicules — sur les deux ponts, en position levée, plus un au sol
+  function car(x, y, z, len, wid, axis) {
+    if (axis === 'z') {
+      box(x, y, z, wid, 0.72, len, MAT.vehicule, 7, { group: 'car' });
+      box(x + 0.13, y + 0.72, z + len * 0.26, wid - 0.26, 0.52, len * 0.44, MAT.vitreAuto, 7, { group: 'car' });
+    } else {
+      box(x, y, z, len, 0.72, wid, MAT.vehicule, 7, { group: 'car' });
+      box(x + len * 0.26, y + 0.72, z + 0.13, len * 0.44, 0.52, wid - 0.26, MAT.vitreAuto, 7, { group: 'car' });
+    }
+  }
+  car(SX - 0.925, LIFT + 0.13, SZ - 2.40, 4.80, 1.85, 'z');                    // sur le ciseaux
+  car(1.50, AY + 0.13, 15.56, 4.80, 1.85, 'x');                                // sur le 2 colonnes
+  car(8.10, 0, 19.60, 4.60, 1.82, 'z');                                        // en attente
+
+  /* ============================ 4D ============================ */
+  var PHASES = [
+    { n: 'Gros œuvre, dalle &amp; structure', a: 0, b: 3 },
+    { n: 'Enveloppe &amp; porte sectionnelle', a: 3, b: 5 },
+    { n: 'Réseaux, 400 V &amp; éclairage LED', a: 4, b: 7 },
+    { n: 'Cabine de peinture NS7000', a: 6, b: 9 },
+    { n: 'Ponts élévateurs &amp; scellement', a: 8, b: 10 },
+    { n: 'Labo, poste pneus, vestiaire', a: 9, b: 11 },
+    { n: 'Marquage, sécurité, réception', a: 11, b: 12 }
+  ];
+  var TOTAL = 12;
+
+  var gantt = document.getElementById('gantt');
+  var rows = PHASES.map(function (p, i) {
+    var row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML =
+      '<div class="lab"><span class="no">' + (i + 1) + '</span><span>' + p.n +
+      '</span><span class="wks">S' + String(p.a).padStart(2, '0') + '–S' + String(p.b).padStart(2, '0') + '</span></div>' +
+      '<div class="track"><div class="fill"></div></div>';
+    gantt.appendChild(row);
+    var track = row.querySelector('.track');
+    var cur = document.createElement('div');
+    cur.className = 'cursor';
+    track.appendChild(cur);
+    return { el: row, fill: row.querySelector('.fill'), cur: cur, p: p };
+  });
+
+  /* ============================ rendu ============================ */
+  var cv = document.getElementById('view');
+  var ctx = cv.getContext('2d');
+  var Wd = 800, Hd = 600, DPR = 1;
+
+  var VIEWS = {
+    axo:   { th: 0.72, ph: 0.54, di: 28, tg: [9.16, 1.70, 12.31] },
+    top:   { th: 0.0001, ph: 1.44, di: 31, tg: [9.16, 0.60, 12.31] },
+    door:  { th: 0.06, ph: 0.24, di: 25, tg: [9.16, 1.60, 14.00] },
+    lifts: { th: 1.06, ph: 0.44, di: 20, tg: [6.60, 1.10, 13.20] }
+  };
+  var cam = { th: VIEWS.axo.th, ph: VIEWS.axo.ph, di: VIEWS.axo.di, tg: VIEWS.axo.tg.slice() };
+  var LIGHT = norm([0.42, 0.86, -0.30]);
+  var week = 12;
+  var show = { wall: true, car: true, led: true, mark: true };
+
+  function resize() {
+    var r = cv.getBoundingClientRect();
+    if (!r.width) return;
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    Wd = Math.round(r.width); Hd = Math.round(r.height);
+    cv.width = Wd * DPR; cv.height = Hd * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    draw();
+  }
+
+  function faceVisible(f) {
+    if (f.group === 'wall' && !show.wall) return false;
+    if (f.group === 'car' && !show.car) return false;
+    if (f.group === 'led' && !show.led) return false;
+    if (f.group === 'mark' && !show.mark) return false;
+    return week >= PHASES[f.phase - 1].a;
+  }
+
+  function draw() {
+    var ph = cam.ph, th = cam.th, di = cam.di, tg = cam.tg;
+    var eye = [
+      tg[0] + di * Math.cos(ph) * Math.sin(th),
+      tg[1] + di * Math.sin(ph),
+      tg[2] + di * Math.cos(ph) * Math.cos(th)
+    ];
+    var fwd = norm(sub(tg, eye));
+    var rgt = norm(cross(fwd, [0, 1, 0]));
+    var upv = cross(rgt, fwd);
+    var f = (Hd * 0.5) / Math.tan(0.52);
+
+    // fond
+    var gr = ctx.createLinearGradient(0, 0, 0, Hd);
+    var st = getComputedStyle(document.documentElement);
+    gr.addColorStop(0, st.getPropertyValue('--sky-1').trim() || '#DCE1DB');
+    gr.addColorStop(1, st.getPropertyValue('--sky-2').trim() || '#C4CBC4');
+    ctx.fillStyle = gr;
+    ctx.fillRect(0, 0, Wd, Hd);
+
+    var list = [];
+    for (var i = 0; i < FACES.length; i++) {
+      var fc = FACES[i];
+      if (!faceVisible(fc)) continue;
+      if (fc.cullDir && dot(fc.cullDir, sub(eye, fc.cullPt)) > 0) continue;
+      var p0 = fc.p[0];
+      if (dot(fc.n, sub(eye, p0)) <= 0) continue;             // faces arrière
+      var pts = [], zs = 0, ok = true;
+      for (var j = 0; j < 4; j++) {
+        var v = sub(fc.p[j], eye);
+        var cz = dot(v, fwd);
+        if (cz < 0.25) { ok = false; break; }
+        pts.push([Wd / 2 + f * dot(v, rgt) / cz, Hd / 2 - f * dot(v, upv) / cz]);
+        zs += cz;
+      }
+      if (!ok) continue;
+      list.push({ pts: pts, z: zs / 4, f: fc });
+    }
+    list.sort(function (x, y) { return y.z - x.z; });
+
+    for (var m = 0; m < list.length; m++) {
+      var it = list[m], fa = it.f, c = fa.c;
+      var lit = fa.flat ? 1.06 : 0.44 + 0.62 * Math.max(0, dot(fa.n, LIGHT));
+      var doing = week < PHASES[fa.phase - 1].b;
+      var R, G, B;
+      if (doing) {                                            // matériel en cours de pose
+        R = 179; G = 53; B = 44;
+        var mixv = 0.55;
+        R = Math.round(c[0] * (1 - mixv) + R * mixv);
+        G = Math.round(c[1] * (1 - mixv) + G * mixv);
+        B = Math.round(c[2] * (1 - mixv) + B * mixv);
+      } else { R = c[0]; G = c[1]; B = c[2]; }
+      R = Math.min(255, Math.round(R * lit));
+      G = Math.min(255, Math.round(G * lit));
+      B = Math.min(255, Math.round(B * lit));
+
+      ctx.beginPath();
+      ctx.moveTo(it.pts[0][0], it.pts[0][1]);
+      for (var q2 = 1; q2 < 4; q2++) ctx.lineTo(it.pts[q2][0], it.pts[q2][1]);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = 'rgb(' + R + ',' + G + ',' + B + ')';
+      ctx.fill();
+      if (!fa.flat) {
+        ctx.globalAlpha = doing ? 0.55 : 0.24;
+        ctx.strokeStyle = doing ? 'rgb(150,40,32)' : 'rgb(18,22,24)';
+        ctx.lineWidth = 0.85;
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  /* ============================ interactions ============================ */
+  var drag = null, pointers = new Map(), pinch = 0;
+
+  cv.addEventListener('pointerdown', function (e) {
+    cv.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pointers.size === 1) drag = [e.clientX, e.clientY];
+    else if (pointers.size === 2) { pinch = pinchDist(); drag = null; }
+  });
+  function pinchDist() {
+    var v = Array.from(pointers.values());
+    return Math.hypot(v[0][0] - v[1][0], v[0][1] - v[1][1]);
+  }
+  cv.addEventListener('pointermove', function (e) {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pointers.size === 2 && pinch) {
+      var d2 = pinchDist();
+      cam.di = Math.min(70, Math.max(9, cam.di * pinch / (d2 || 1)));
+      pinch = d2; draw(); return;
+    }
+    if (!drag) return;
+    cam.th -= (e.clientX - drag[0]) * 0.0072;
+    cam.ph = Math.min(1.47, Math.max(0.06, cam.ph + (e.clientY - drag[1]) * 0.0055));
+    drag = [e.clientX, e.clientY];
+    draw();
+  });
+  function release(e) { pointers.delete(e.pointerId); if (pointers.size < 2) pinch = 0; if (!pointers.size) drag = null; }
+  cv.addEventListener('pointerup', release);
+  cv.addEventListener('pointercancel', release);
+  cv.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    cam.di = Math.min(70, Math.max(9, cam.di * (1 + Math.sign(e.deltaY) * 0.09)));
+    draw();
+  }, { passive: false });
+  cv.addEventListener('keydown', function (e) {
+    var k = e.key, hit = true;
+    if (k === 'ArrowLeft') cam.th += 0.09;
+    else if (k === 'ArrowRight') cam.th -= 0.09;
+    else if (k === 'ArrowUp') cam.ph = Math.min(1.47, cam.ph + 0.06);
+    else if (k === 'ArrowDown') cam.ph = Math.max(0.06, cam.ph - 0.06);
+    else if (k === '+' || k === '=') cam.di = Math.max(9, cam.di * 0.9);
+    else if (k === '-') cam.di = Math.min(70, cam.di * 1.1);
+    else hit = false;
+    if (hit) { e.preventDefault(); draw(); }
+  });
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var camAnim = null;
+  document.querySelectorAll('[data-view]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('[data-view]').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
+      btn.setAttribute('aria-pressed', 'true');
+      var v = VIEWS[btn.dataset.view];
+      if (reduce) { cam.th = v.th; cam.ph = v.ph; cam.di = v.di; cam.tg = v.tg.slice(); draw(); return; }
+      var from = { th: cam.th, ph: cam.ph, di: cam.di, tg: cam.tg.slice() }, t0 = performance.now();
+      if (camAnim) cancelAnimationFrame(camAnim);
+      (function step(now) {
+        var u = Math.min(1, (now - t0) / 620);
+        var e2 = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+        cam.th = from.th + (v.th - from.th) * e2;
+        cam.ph = from.ph + (v.ph - from.ph) * e2;
+        cam.di = from.di + (v.di - from.di) * e2;
+        for (var i = 0; i < 3; i++) cam.tg[i] = from.tg[i] + (v.tg[i] - from.tg[i]) * e2;
+        draw();
+        if (u < 1) camAnim = requestAnimationFrame(step);
+      })(t0);
+    });
+  });
+
+  [['tWalls', 'wall'], ['tCars', 'car'], ['tLed', 'led'], ['tMark', 'mark']].forEach(function (pair) {
+    document.getElementById(pair[0]).addEventListener('change', function (e) {
+      show[pair[1]] = e.target.checked; draw();
+    });
+  });
+
+  /* -- pilotage du temps -- */
+  var slider = document.getElementById('week');
+  var hudWeek = document.getElementById('hudWeek');
+  var hudPhase = document.getElementById('hudPhase');
+  var hudCount = document.getElementById('hudCount');
+  var wkNum = document.getElementById('wkNum');
+
+  function setWeek(w) {
+    week = w;
+    var shown = Math.round(w * 100) / 100;
+    wkNum.textContent = String(Math.round(shown)).padStart(2, '0');
+    hudWeek.textContent = 'S' + String(Math.floor(shown)).padStart(2, '0');
+
+    var active = [], done = 0;
+    rows.forEach(function (r) {
+      var p = r.p, state;
+      if (week >= p.b) { state = 'done'; done++; }
+      else if (week >= p.a) { state = 'doing'; active.push(p.n); }
+      else state = 'todo';
+      r.el.dataset.state = state;
+      var prog = Math.min(1, Math.max(0, (week - p.a) / (p.b - p.a)));
+      r.fill.style.left = (p.a / TOTAL * 100) + '%';
+      r.fill.style.width = ((p.b - p.a) / TOTAL * prog * 100) + '%';
+      r.cur.style.left = (week / TOTAL * 100) + '%';
+    });
+    hudPhase.innerHTML = active.length ? active.join(' + ') : (week >= TOTAL ? 'Atelier réceptionné' : 'préparation');
+    hudCount.textContent = done + '/' + PHASES.length + ' phases achevées';
+    draw();
+  }
+
+  slider.addEventListener('input', function () { stop(); setWeek(parseFloat(slider.value)); });
+
+  var playBtn = document.getElementById('play'), raf = null, t0 = 0, from0 = 0;
+  function stop() {
+    if (raf) cancelAnimationFrame(raf);
+    raf = null;
+    playBtn.setAttribute('aria-pressed', 'false');
+    playBtn.textContent = '▶ Dérouler';
+  }
+  function play() {
+    playBtn.setAttribute('aria-pressed', 'true');
+    playBtn.textContent = '❚❚ Pause';
+    from0 = week >= TOTAL ? 0 : week;
+    t0 = performance.now();
+    (function tick(now) {
+      var w = from0 + (now - t0) / 1250;
+      if (w >= TOTAL) { slider.value = TOTAL; setWeek(TOTAL); stop(); return; }
+      slider.value = w; setWeek(w);
+      raf = requestAnimationFrame(tick);
+    })(t0);
+  }
+  playBtn.addEventListener('click', function () { raf ? stop() : play(); });
+
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(cv);
+  window.addEventListener('resize', resize);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  resize();
+  setWeek(12);
+  if (!reduce) setTimeout(function () { slider.value = 0; setWeek(0); play(); }, 500);
+})();
+</script>
